@@ -629,10 +629,7 @@ export function Contact() {
       <footer className="mt-20 border-t border-white/10 pt-8 text-center text-sm text-white/40">
         <p>© {new Date().getFullYear()} {site.name} · All rights reserved.</p>
         <p className="mt-1 text-xs text-white/30">
-          Crafted with Next.js, TypeScript, Tailwind CSS &amp; 3D WebGL Canvas ·{" "}
-          <a href="/admin" className="underline hover:text-white transition-colors">
-            Admin Portal
-          </a>
+          Crafted with Next.js, TypeScript, Tailwind CSS &amp; 3D WebGL Canvas
         </p>
       </footer>
     </section>

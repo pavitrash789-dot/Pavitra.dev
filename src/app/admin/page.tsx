@@ -57,8 +57,8 @@ export default function Admin() {
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
   const [token, setToken] = useState<string>("");
-  const [em, setEm] = useState("pavitrash789@gmail.com");
-  const [pw, setPw] = useState("Pavitra@1234");
+  const [em, setEm] = useState("");
+  const [pw, setPw] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>("requests");
@@ -338,17 +338,17 @@ export default function Admin() {
             </div>
             <p className="text-xs uppercase tracking-widest text-white/40">Pavitra<span className="grad">.dev</span></p>
             <h1 className="font-display text-2xl font-bold text-white mt-1">Admin Dashboard</h1>
-            <p className="text-sm text-white/60 mt-1">Manage project submissions, leads, and portfolio projects.</p>
+            <p className="text-sm text-white/60 mt-1">Enter your Admin ID and Password to continue.</p>
           </div>
 
-          <form onSubmit={login} className="space-y-3.5">
+          <form onSubmit={login} className="space-y-4">
             <div>
-              <label className="text-xs uppercase font-semibold text-white/50 block mb-1">Email</label>
+              <label className="text-xs uppercase font-semibold text-white/50 block mb-1.5">Admin ID / Email</label>
               <input
                 className="inp"
                 type="email"
                 placeholder="admin@example.com"
-                autoComplete="email"
+                autoComplete="username"
                 value={em}
                 onChange={e => setEm(e.target.value)}
                 required
@@ -356,11 +356,11 @@ export default function Admin() {
             </div>
 
             <div>
-              <label className="text-xs uppercase font-semibold text-white/50 block mb-1">Password</label>
+              <label className="text-xs uppercase font-semibold text-white/50 block mb-1.5">Password</label>
               <input
                 className="inp"
                 type="password"
-                placeholder="••••••••"
+                placeholder="••••••••••••"
                 autoComplete="current-password"
                 value={pw}
                 onChange={e => setPw(e.target.value)}
@@ -376,42 +376,19 @@ export default function Admin() {
             )}
 
             <button className="btn btn-p w-full justify-center !py-3 font-semibold shadow-lg" disabled={busy}>
-              {busy ? <Loader2 className="animate-spin" size={16} /> : <KeyRound size={16} />}
-              <span>Sign In to Dashboard</span>
+              {busy ? (
+                <>
+                  <Loader2 className="animate-spin" size={16} />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <KeyRound size={16} />
+                  <span>Sign In</span>
+                </>
+              )}
             </button>
           </form>
-
-          {/* Quick Admin Logins */}
-          <div className="pt-4 border-t border-white/10">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40 mb-2.5 text-center">
-              Quick Admin Accounts (Pre-configured)
-            </p>
-            <div className="grid gap-2">
-              <button
-                type="button"
-                onClick={() => loginWith("pavitrash789@gmail.com", "Pavitra@1234")}
-                className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-left text-xs hover:border-brand/40 hover:bg-white/10 transition-colors flex items-center justify-between"
-              >
-                <div>
-                  <p className="font-semibold text-white">pavitrash789@gmail.com</p>
-                  <p className="text-[10px] text-white/40">Primary Admin Account</p>
-                </div>
-                <span className="text-brand-2 text-xs font-semibold">1-Click Sign In →</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loginWith("pavitrash123123@gmail.com", "Pavitra@1234")}
-                className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-left text-xs hover:border-brand/40 hover:bg-white/10 transition-colors flex items-center justify-between"
-              >
-                <div>
-                  <p className="font-semibold text-white">pavitrash123123@gmail.com</p>
-                  <p className="text-[10px] text-white/40">Secondary Admin Account</p>
-                </div>
-                <span className="text-brand-2 text-xs font-semibold">1-Click Sign In →</span>
-              </button>
-            </div>
-          </div>
         </div>
       </main>
     );
