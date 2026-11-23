@@ -1,4 +1,4 @@
-export const site = { name:"Pavitra Sharma", email:"pavitrash789@gmail.com", phone:"+917665534202", wa:"https://wa.me/917665534202?text=Hi%20Pavitra%2C%20I%27d%20like%20a%20website",
+export const site = { name:"Pavitra Sharma", email:"pavitrash789@gmail.com", phone:"+917665534302", wa:"https://wa.me/917665534302?text=Hi%20Pavitra%2C%20I%27d%20like%20a%20website",
  linkedin:"https://www.linkedin.com/in/pavitra-sharma-031b77317", github:"https://github.com/pavitrash789-dot", city:"Kota, Rajasthan" };
 export const stack = ["HTML","CSS","JavaScript","React","Node.js","Flask","Python","Supabase","Git & GitHub"];
 export const services = ["Website Design","Frontend Development","Backend Development","E-commerce Development","Responsive Website Development","Website Redesign","Website Maintenance","Custom Web Applications","SEO-Friendly Website Development","Business Website Development"];
