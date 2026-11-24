@@ -35,6 +35,7 @@ export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const links = [
     ["Choose", "#choose"],
+    ["Pricing", "#pricing"],
     ["Customize", "#customize"],
     ["Services", "#services"],
     ["Work", "#portfolio"],
@@ -221,6 +222,15 @@ type ProjectItem = {
 
 const defaultPortfolio: ProjectItem[] = [
   {
+    id: "p0",
+    title: "Pavitra Sharma Portfolio",
+    category: "Portfolio & Personal Brand",
+    description: "Modern developer portfolio showcasing bespoke UI design, full-stack architectures, interactive 3D elements, and real-time project solutions.",
+    tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    demo_url: "https://my-portfolio-beta-ochre-netty7ie4y.vercel.app/",
+    image_url: null,
+  },
+  {
     id: "p1",
     title: "Aura Luxe E-Commerce",
     category: "E-commerce & Payments",
@@ -259,13 +269,18 @@ export function Portfolio() {
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         if (data && data.length > 0) {
-          setItems(data as ProjectItem[]);
+          const hasPavitra = data.some((p: any) => p.demo_url && (p.demo_url.includes("my-portfolio-beta-ochre-netty7ie4y") || p.demo_url.includes("my-portfolio-pavitra6")));
+          if (!hasPavitra) {
+            setItems([defaultPortfolio[0], ...(data as ProjectItem[])]);
+          } else {
+            setItems(data as ProjectItem[]);
+          }
         }
       });
   }, []);
 
   return (
-    <section id="portfolio" className="relative mx-auto max-w-6xl px-5 py-24">
+    <section id="portfolio" className="relative mx-auto max-w-7xl px-5 py-24">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-brand">
@@ -283,7 +298,7 @@ export function Portfolio() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((p, idx) => (
           <motion.div
             key={p.id}

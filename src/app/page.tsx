@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
+import Pricing from "@/components/Pricing";
 import Wizard from "@/components/Wizard";
 import { Nav, Services, Portfolio, How, Contact, WhatsAppFloat } from "@/components/Sections";
 import BackgroundMesh3D from "@/components/3d/BackgroundMesh3D";
@@ -15,6 +16,7 @@ export default function Home() {
         <Nav />
         <Hero />
         <Categories />
+        <Pricing />
         <Wizard />
         <Services />
         <Portfolio />

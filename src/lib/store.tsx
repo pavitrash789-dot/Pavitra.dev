@@ -1,8 +1,11 @@
 "use client";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import type { PricingBreakdown } from "./pricing";
 
 export type Draft = {
   category: string;
+  package?: string;
+  pricing_breakdown?: PricingBreakdown | null;
   purpose: string;
   design: string;
   pages: string[];
@@ -20,6 +23,8 @@ export type Draft = {
 
 export const empty: Draft = {
   category: "",
+  package: "starter",
+  pricing_breakdown: null,
   purpose: "",
   design: "",
   pages: [],

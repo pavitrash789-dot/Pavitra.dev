@@ -2,10 +2,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AlertCircle, Check, ExternalLink, FolderKanban, Inbox, Loader2, LogOut, Mail, MessageCircle,
-  Pencil, Plus, RefreshCw, Save, Search, Trash2, X, KeyRound, ShieldCheck
+  Pencil, Plus, RefreshCw, Save, Search, Trash2, X, KeyRound, ShieldCheck, Tag, Sliders, DollarSign
 } from "lucide-react";
 import { CONFIG_HINT, isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { statuses } from "@/lib/site";
+import { DEFAULT_PRICING_CONFIG, type PricingConfig, formatINR } from "@/lib/pricing";
 
 type FileRef = { path: string; name: string };
 type Request = {
@@ -13,13 +14,15 @@ type Request = {
   pages: string[] | null; features: string[] | null; name: string | null; business: string | null; email: string | null;
   whatsapp: string | null; description: string | null; reference_url: string | null; budget: string | null;
   timeline: string | null; files: FileRef[] | null; notes: string | null;
+  package?: string | null;
+  pricing_breakdown?: any;
 };
 type Enquiry = { id: string; created_at: string; name: string | null; email: string | null; message: string | null };
 type Project = {
   id: string; created_at: string; title: string | null; category: string | null; description: string | null;
   tech: string[] | null; demo_url: string | null; image_url: string | null;
 };
-type Tab = "requests" | "enquiries" | "portfolio";
+type Tab = "requests" | "enquiries" | "portfolio" | "pricing";
 
 const EMPTY_PROJECT = { title: "", category: "", description: "", tech: "", demo_url: "", image_url: "" };
 const digits = (v: string | null | undefined) => String(v ?? "").replace(/\D/g, "");
@@ -71,6 +74,9 @@ export default function Admin() {
   const [notes, setNotes] = useState(""); const [savedNote, setSavedNote] = useState(false);
   const [q, setQ] = useState(""); const [statusFilter, setStatusFilter] = useState("all");
   const [np, setNp] = useState(EMPTY_PROJECT); const [editing, setEditing] = useState<string | null>(null);
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING_CONFIG);
+  const [savingPricing, setSavingPricing] = useState(false);
+  const [pricingSavedToast, setPricingSavedToast] = useState(false);
 
   const loadData = useCallback(async (jwtToken: string) => {
     try {
@@ -83,9 +89,18 @@ export default function Admin() {
         setReqs(j.requests || []);
         setEnq(j.enquiries || []);
         setPf(j.portfolio || []);
+        if (j.pricing?.categories) setPricing(j.pricing);
         return;
       }
     } catch {}
+
+    // Also fetch pricing config
+    fetch("/api/pricing")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && Array.isArray(d.categories)) setPricing(d);
+      })
+      .catch(() => {});
 
     // 2. Direct client fallback
     const [a, b, c] = await Promise.all([
@@ -99,6 +114,28 @@ export default function Admin() {
     setEnq((b.data ?? []) as Enquiry[]);
     setPf((c.data ?? []) as Project[]);
   }, []);
+
+  const savePricing = async () => {
+    setSavingPricing(true);
+    try {
+      const res = await fetch("/api/pricing", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(pricing),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update pricing.");
+      setPricingSavedToast(true);
+      setTimeout(() => setPricingSavedToast(false), 3000);
+    } catch (err: any) {
+      alert(err.message || "Could not save pricing.");
+    } finally {
+      setSavingPricing(false);
+    }
+  };
 
   const load = useCallback(() => {
     if (token) loadData(token);
@@ -398,6 +435,7 @@ export default function Admin() {
     { id: "requests", label: "Requests", count: reqs.length },
     { id: "enquiries", label: "Enquiries", count: enq.length },
     { id: "portfolio", label: "Portfolio", count: pf.length },
+    { id: "pricing", label: "Pricing Manager", count: pricing.categories.length },
   ];
 
   return <main className="mx-auto max-w-7xl px-4 pb-16 pt-6 md:px-6">
@@ -441,7 +479,7 @@ export default function Admin() {
         {t.label} <span className="ml-1 text-xs text-white/40">{t.count}</span></button>)}
     </div>
 
-    {tab !== "portfolio" && <div className="mb-5 flex flex-wrap gap-3">
+    {tab !== "portfolio" && tab !== "pricing" && <div className="mb-5 flex flex-wrap gap-3">
       <label className="relative flex-1 min-w-56"><Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
         <input className="inp !pl-9" placeholder={tab === "requests" ? "Search name, email, category…" : "Search enquiries…"} value={q} onChange={e => setQ(e.target.value)} /></label>
       {tab === "requests" && <select className="inp max-w-52" aria-label="Filter by status" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
@@ -490,6 +528,33 @@ export default function Admin() {
           {([["Type", sel.category], ["Design", sel.design], ["Budget", sel.budget], ["Timeline", sel.timeline]] as const).map(([k, v]) =>
             <div key={k}><dt className="text-xs uppercase tracking-wider text-white/40">{k}</dt><dd>{v || "—"}</dd></div>)}
         </dl>
+
+        {!!sel.pricing_breakdown && (
+          <div className="rounded-xl border border-brand-2/30 bg-brand-2/5 p-4 text-xs space-y-2">
+            <div className="flex items-center justify-between text-brand-2 font-bold uppercase tracking-wider">
+              <span>Saved Pricing Breakdown</span>
+              <span className="text-white text-sm">{formatINR(sel.pricing_breakdown.estimatedTotal)}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-white/75 pt-1 border-t border-white/5">
+              <div>Package: <strong className="text-white">{sel.pricing_breakdown.packageName || sel.package}</strong></div>
+              <div>Base Price: <strong className="text-white">{formatINR(sel.pricing_breakdown.selectedPackagePrice)}</strong></div>
+              <div>Pages: <strong className="text-white">{sel.pricing_breakdown.selectedPages} ({sel.pricing_breakdown.extraPagesCost > 0 ? `+${formatINR(sel.pricing_breakdown.extraPagesCost)}` : "Included"})</strong></div>
+              <div>Features Cost: <strong className="text-white">{formatINR(sel.pricing_breakdown.featuresCost || 0)}</strong></div>
+            </div>
+            {sel.pricing_breakdown.selectedFeatures?.length > 0 && (
+              <div className="text-white/60">
+                <span className="text-white/40">Features: </span>
+                {sel.pricing_breakdown.selectedFeatures.map((f: any) => `${f.name} (+${formatINR(f.price)})`).join(", ")}
+              </div>
+            )}
+            {sel.pricing_breakdown.selectedSpecialRequirements?.length > 0 && (
+              <div className="text-brand-2/80">
+                <span className="text-white/40">Addons: </span>
+                {sel.pricing_breakdown.selectedSpecialRequirements.map((r: any) => `${r.name} (+${formatINR(r.price)})`).join(", ")}
+              </div>
+            )}
+          </div>
+        )}
 
         {!!sel.purpose && <div><p className="text-xs uppercase tracking-wider text-white/40">Purpose</p><p className="mt-1 text-sm text-white/80">{sel.purpose}</p></div>}
         {!!sel.description && <div><p className="text-xs uppercase tracking-wider text-white/40">Notes from client</p><p className="mt-1 whitespace-pre-wrap text-sm text-white/80">{sel.description}</p></div>}
@@ -550,6 +615,206 @@ export default function Admin() {
           </div>
         </article>)}
         {!pf.length && <Empty>No portfolio projects yet. Add your first one.</Empty>}
+      </div>
+    </div>}
+
+    {tab === "pricing" && <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass p-6 rounded-2xl border border-white/10">
+        <div>
+          <h2 className="font-display text-2xl font-bold text-white">Pricing &amp; Quotation Engine</h2>
+          <p className="text-xs text-white/60 mt-1">
+            Update category starting prices, tier packaging, extra page rates, and feature addons without editing code. Changes apply immediately to public calculators.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={savePricing}
+            disabled={savingPricing}
+            className="btn btn-p !px-5 !py-2.5 text-sm font-semibold shadow-lg shadow-brand/20"
+          >
+            <Save size={16} />
+            <span>{savingPricing ? "Saving Changes..." : "Save Pricing Changes"}</span>
+          </button>
+          {pricingSavedToast && (
+            <span className="flex items-center gap-1.5 text-xs text-brand-2 font-semibold bg-brand-2/15 border border-brand-2/30 px-3 py-1.5 rounded-full">
+              <Check size={14} /> Saved &amp; Live!
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Global Computation Rates */}
+      <div className="glass p-6 rounded-2xl border border-white/10">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2 mb-4">
+          Global Computation Rates
+        </h3>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <label className="block text-xs text-white/60 mb-1">Per Extra Page Charge (₹)</label>
+            <input
+              type="number"
+              value={pricing.extraPageRate}
+              onChange={(e) => setPricing({ ...pricing, extraPageRate: Number(e.target.value) || 0 })}
+              className="inp"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-white/60 mb-1">Applicable GST Rate (%)</label>
+            <input
+              type="number"
+              value={pricing.taxRate}
+              onChange={(e) => setPricing({ ...pricing, taxRate: Number(e.target.value) || 0 })}
+              className="inp"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-white/60 mb-1">Currency Code</label>
+            <input
+              type="text"
+              disabled
+              value={pricing.currency + " (INR)"}
+              className="inp opacity-60"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Categories & Tier Pricing */}
+      <div className="glass p-6 rounded-2xl border border-white/10 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2">
+            Website Categories &amp; Package Tiers ({pricing.categories.length})
+          </h3>
+          <span className="text-xs text-white/40">Starter price syncs with Starting From</span>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {pricing.categories.map((cat, idx) => (
+            <div key={cat.id} className="card p-4 space-y-3 border-white/10">
+              <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                <span className="font-semibold text-sm text-white">{cat.name}</span>
+                {cat.isComplex && (
+                  <span className="text-[10px] bg-brand/20 text-brand px-2 py-0.5 rounded-full border border-brand/30">
+                    Complex
+                  </span>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-white/50 mb-0.5">Starting From / Starter Tier (₹)</label>
+                <input
+                  type="number"
+                  value={cat.startingPrice}
+                  onChange={(e) => {
+                    const updated = [...pricing.categories];
+                    const val = Number(e.target.value) || 0;
+                    updated[idx] = {
+                      ...cat,
+                      startingPrice: val,
+                      packages: { ...cat.packages, starter: val },
+                    };
+                    setPricing({ ...pricing, categories: updated });
+                  }}
+                  className="inp !py-1.5 text-xs"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[11px] text-white/50 mb-0.5">Professional (₹)</label>
+                  <input
+                    type="number"
+                    value={cat.packages.professional}
+                    onChange={(e) => {
+                      const updated = [...pricing.categories];
+                      updated[idx] = {
+                        ...cat,
+                        packages: { ...cat.packages, professional: Number(e.target.value) || 0 },
+                      };
+                      setPricing({ ...pricing, categories: updated });
+                    }}
+                    className="inp !py-1.5 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-white/50 mb-0.5">Premium (₹)</label>
+                  <input
+                    type="number"
+                    value={cat.packages.premium}
+                    onChange={(e) => {
+                      const updated = [...pricing.categories];
+                      updated[idx] = {
+                        ...cat,
+                        packages: { ...cat.packages, premium: Number(e.target.value) || 0 },
+                      };
+                      setPricing({ ...pricing, categories: updated });
+                    }}
+                    className="inp !py-1.5 text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Feature Addon Pricing */}
+      <div className="glass p-6 rounded-2xl border border-white/10 space-y-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2">
+          Feature Addon Pricing ({pricing.features.length})
+        </h3>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {pricing.features.map((feat, fidx) => (
+            <div key={feat.id} className="card p-3 flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="text-xs font-semibold text-white truncate">{feat.name}</div>
+                <div className="text-[10px] text-white/40 truncate">{feat.description}</div>
+              </div>
+              <div className="w-24 shrink-0">
+                <input
+                  type="number"
+                  value={feat.price}
+                  onChange={(e) => {
+                    const updated = [...pricing.features];
+                    updated[fidx] = { ...feat, price: Number(e.target.value) || 0 };
+                    setPricing({ ...pricing, features: updated });
+                  }}
+                  className="inp !py-1 !px-2 text-xs text-right"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Special Requirements */}
+      <div className="glass p-6 rounded-2xl border border-white/10 space-y-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2">
+          Special Requirements &amp; Boosters ({pricing.specialRequirements.length})
+        </h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {pricing.specialRequirements.map((req, ridx) => (
+            <div key={req.id} className="card p-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-xs font-semibold text-white">{req.name}</div>
+                <div className="text-[10px] text-white/50">{req.description}</div>
+              </div>
+              <div className="w-28 shrink-0">
+                <input
+                  type="number"
+                  value={req.price}
+                  onChange={(e) => {
+                    const updated = [...pricing.specialRequirements];
+                    updated[ridx] = { ...req, price: Number(e.target.value) || 0 };
+                    setPricing({ ...pricing, specialRequirements: updated });
+                  }}
+                  className="inp !py-1 !px-2 text-xs text-right"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>}
   </main>;

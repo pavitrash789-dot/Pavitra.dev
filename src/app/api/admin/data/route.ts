@@ -2,6 +2,7 @@ import { NextResponse } from "next/server.js";
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
+import { getLocalPricingConfig } from "@/lib/pricing-store";
 
 export const runtime = "nodejs";
 
@@ -97,6 +98,7 @@ export async function GET(req: Request) {
       enquiries: enqs,
       portfolio: pf,
       adminEmail: user.email,
+      pricing: getLocalPricingConfig(),
     });
   } catch (err: any) {
     console.error("Admin API GET error:", err);

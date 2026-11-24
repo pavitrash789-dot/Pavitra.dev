@@ -76,6 +76,8 @@ export async function POST(req: Request) {
 
     const submissionPayload = {
       category: s(d.category, 50),
+      package: s(d.package, 30) || "starter",
+      pricing_breakdown: d.pricing_breakdown && typeof d.pricing_breakdown === "object" ? d.pricing_breakdown : null,
       purpose: s(d.purpose, 2000),
       design: s(d.design, 40),
       pages: arr(d.pages),

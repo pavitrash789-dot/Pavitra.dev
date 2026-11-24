@@ -178,7 +178,103 @@ async function runAll() {
     }
   });
 
-  // 6. Test Build Output or Page Structure
+  // 6. Test Pricing & Quotation System
+  await test("Pricing System: exact starting prices for all 17 categories", async () => {
+    const { DEFAULT_CATEGORY_PRICING } = await import("../src/lib/pricing.ts");
+    const { categories } = await import("../src/lib/site.ts");
+
+    const expectedPrices = {
+      landing: 2999,
+      portfolio: 3999,
+      personal_brand: 4999,
+      business: 5999,
+      cms: 7999,
+      restaurant: 4999,
+      gym: 4999,
+      blog: 5999,
+      agency: 6999,
+      education: 7999,
+      realestate: 9999,
+      hotel: 9999,
+      event: 5999,
+      booking: 7999,
+      ecommerce: 11999,
+      saas: 14999,
+      custom: 19999,
+    };
+
+    assert.strictEqual(DEFAULT_CATEGORY_PRICING.length, 17, "Should have exactly 17 categories");
+    for (const [id, expectedPrice] of Object.entries(expectedPrices)) {
+      const match = DEFAULT_CATEGORY_PRICING.find(c => c.id === id);
+      assert.ok(match, `Category ${id} should exist in DEFAULT_CATEGORY_PRICING`);
+      assert.strictEqual(match.startingPrice, expectedPrice, `${id} starting price must match ${expectedPrice}`);
+
+      const siteMatch = categories.find(c => c.id === id);
+      assert.ok(siteMatch, `Category ${id} should exist in site.ts categories`);
+      assert.strictEqual(siteMatch.startingPrice, expectedPrice, `${id} starting price in site.ts must match ${expectedPrice}`);
+    }
+  });
+
+  await test("Package System & Dynamic Calculator: calculates accurately", async () => {
+    const { calculatePricingBreakdown, PACKAGES, formatINR } = await import("../src/lib/pricing.ts");
+
+    assert.strictEqual(PACKAGES.length, 3, "Should have Starter, Professional, Premium packages");
+    assert.strictEqual(PACKAGES[0].maxPages, 3, "Starter should include 3 pages");
+    assert.strictEqual(PACKAGES[1].maxPages, 7, "Professional should include 7 pages");
+    assert.strictEqual(PACKAGES[2].maxPages, 12, "Premium should include 12 pages");
+
+    // Test Landing Page Starter with 3 pages (no extra)
+    const b1 = calculatePricingBreakdown({
+      categoryId: "landing",
+      packageId: "starter",
+      pages: 3,
+      selectedFeatureIds: [],
+      selectedRequirementIds: [],
+    });
+    assert.strictEqual(b1.startingPrice, 2999);
+    assert.strictEqual(b1.selectedPackagePrice, 2999);
+    assert.strictEqual(b1.extraPages, 0);
+    assert.strictEqual(b1.extraPagesCost, 0);
+    assert.strictEqual(b1.estimatedTotal, 2999);
+
+    // Test E-commerce Professional with 10 pages (+3 extra pages @ ₹500 = ₹1,500) and Payment Gateway (₹2,499)
+    const b2 = calculatePricingBreakdown({
+      categoryId: "ecommerce",
+      packageId: "professional",
+      pages: 10,
+      selectedFeatureIds: ["payment_gateway"],
+      selectedRequirementIds: [],
+    });
+    assert.strictEqual(b2.startingPrice, 11999);
+    assert.strictEqual(b2.selectedPackagePrice, 18999);
+    assert.strictEqual(b2.extraPages, 3);
+    assert.strictEqual(b2.extraPagesCost, 1500);
+    assert.strictEqual(b2.featuresCost, 2499);
+    assert.strictEqual(b2.estimatedTotal, 18999 + 1500 + 2499);
+
+    // INR formatter
+    assert.strictEqual(formatINR(2999), "₹2,999");
+    assert.strictEqual(formatINR(14999), "₹14,999");
+  });
+
+  await test("Pricing API: GET returns valid configuration", async () => {
+    const { GET } = await import("../src/app/api/pricing/route.ts");
+    const res = await GET();
+    assert.strictEqual(res.status, 200, "GET /api/pricing should return 200");
+    const config = await res.json();
+    assert.ok(Array.isArray(config.categories), "Config should have categories array");
+    assert.strictEqual(config.categories.length, 17, "Config should have 17 categories");
+  });
+
+  await test("Portfolio: includes live website my-portfolio-beta-ochre-netty7ie4y.vercel.app", async () => {
+    const sectionsCode = fs.readFileSync(path.resolve(process.cwd(), "src/components/Sections.tsx"), "utf8");
+    assert.ok(
+      sectionsCode.includes("my-portfolio-beta-ochre-netty7ie4y.vercel.app"),
+      "Sections.tsx must include demo_url for my-portfolio-beta-ochre-netty7ie4y.vercel.app"
+    );
+  });
+
+  // 7. Test Build Output or Page Structure
   await test("Production Build: page and essential sections exist", () => {
     const htmlPath = path.resolve(process.cwd(), ".next/server/app/index.html");
     if (fs.existsSync(htmlPath)) {

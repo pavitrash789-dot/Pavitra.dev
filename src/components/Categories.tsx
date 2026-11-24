@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 import { categories } from "@/lib/site";
 import { useDraft } from "@/lib/store";
+import { formatINR } from "@/lib/pricing";
 import Tilt3D from "@/components/3d/Tilt3D";
 
 export default function Categories() {
@@ -75,9 +76,14 @@ export default function Categories() {
 
                   {/* Title & Description with 3D elevation */}
                   <div style={{ transform: "translateZ(20px)" }}>
-                    <h3 className="font-display text-xl font-bold tracking-tight text-white">
-                      {c.name}
-                    </h3>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-display text-xl font-bold tracking-tight text-white">
+                        {c.name}
+                      </h3>
+                    </div>
+                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-2/15 border border-brand-2/30 px-2.5 py-0.5 text-xs font-bold text-brand-2 shadow-sm">
+                      Starting From {formatINR(c.startingPrice)}
+                    </div>
                     <p className="mt-2 text-sm text-white/65 leading-relaxed">
                       {c.desc}
                     </p>

@@ -180,6 +180,7 @@ export default function Wizard() {
 
   const review: [string, string, number][] = [
     ["Website Type", cat?.name ?? "—", 0],
+    ["Package Tier", d.package ? d.package.toUpperCase() : "STARTER", 0],
     ["Purpose", d.purpose || "—", 1],
     ["Design Style", d.design || "—", 2],
     ["Selected Pages", d.pages.join(", ") || "None", 3],
@@ -191,7 +192,7 @@ export default function Wizard() {
     ],
     [
       "Budget & Timeline",
-      `Budget: ${d.budget || "Flexible / Unset"} · Timeline: ${d.timeline || "Flexible"} · Ref: ${d.reference_url || "None"} · Files: ${files.length} attached`,
+      `Budget: ${d.pricing_breakdown ? `₹${d.pricing_breakdown.estimatedTotal?.toLocaleString("en-IN")} (Estimated)` : (d.budget || "Starting From Category Base")} · Timeline: ${d.timeline || "Flexible"} · Ref: ${d.reference_url || "None"} · Files: ${files.length} attached`,
       5,
     ],
   ];
