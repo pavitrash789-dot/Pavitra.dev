@@ -3,3 +3,14 @@ node_modules
 .env.local
 *.tsbuildinfo
 /data/
+
+# Tooling and agent directories
+.agent/
+.agents/
+.claude/
+.cursor/
+.gemini/
+.hermes/
+.opencode/
+.impeccable/
+

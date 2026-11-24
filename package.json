@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",
+    "postbuild": "mkdir -p .next/server/app/_next && ln -sf ../../../static .next/server/app/_next/static",
     "start": "next start",
     "test": "node --loader ./scripts/loader.mjs --experimental-strip-types scripts/test-suite.mjs"
   },

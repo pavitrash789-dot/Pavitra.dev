@@ -1,658 +1,894 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  Code2,
-  MessageCircle,
+  ExternalLink,
   Mail,
-  Linkedin,
-  Github,
-  Loader2,
+  MessageCircle,
   Menu,
   X,
-  ExternalLink,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  ShieldCheck,
+  MapPin,
+  Clock,
   Sparkles,
-  Palette,
-  Layout,
-  Server,
-  ShoppingCart,
-  Smartphone,
-  RefreshCw,
-  Wrench,
-  Cpu,
-  TrendingUp,
-  Building,
-  CheckCircle,
 } from "lucide-react";
-import { site, stack } from "@/lib/site";
-import { supabase } from "@/lib/supabase";
-import Tilt3D from "@/components/3d/Tilt3D";
+import { site } from "@/lib/site";
 
 // ----------------------------------------------------
-// Navigation
+// Header / Navigation: Quiet, Tiny, Restrained
 // ----------------------------------------------------
 export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [localTime, setLocalTime] = useState("");
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    if (mobileOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [mobileOpen]);
+
+  // Live Kota (IST) Clock
+  useEffect(() => {
+    const updateTime = () => {
+      try {
+        const now = new Date();
+        const formatted = new Intl.DateTimeFormat("en-IN", {
+          timeZone: "Asia/Kolkata",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }).format(now);
+        setLocalTime(formatted);
+      } catch {
+        setLocalTime("IST");
+      }
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const links = [
-    ["Choose", "#choose"],
-    ["Pricing", "#pricing"],
-    ["Customize", "#customize"],
+    ["Work", "#work"],
     ["Services", "#services"],
-    ["Work", "#portfolio"],
-    ["Process", "#how"],
+    ["How It Works", "#how"],
+    ["About", "#about"],
     ["Contact", "#contact"],
   ];
 
   return (
-    <header className="glass fixed inset-x-3 top-3 z-50 mx-auto flex max-w-6xl items-center justify-between rounded-full px-5 py-3 border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-      <a href="#" className="font-display text-lg font-bold tracking-tight text-white">
-        Pavitra<span className="grad font-black">.dev</span>
-      </a>
-
-      {/* Desktop Navigation */}
-      <nav className="hidden gap-6 text-sm font-medium text-white/75 md:flex">
-        {links.map(([l, h]) => (
+    <header className="fixed inset-x-0 top-0 z-50 bg-[#F5F6F2]/95 border-b border-stone">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+        {/* Wordmark */}
+        <div className="flex items-baseline gap-2.5">
           <a
-            key={h}
-            href={h}
-            className="transition-colors hover:text-white hover:text-brand-2"
+            href="#"
+            className="font-serif-heading text-xl font-medium tracking-tight text-ink hover:text-slate transition-colors"
           >
-            {l}
+            Pavitra Sharma
           </a>
-        ))}
-      </nav>
+          <span className="hidden sm:inline text-xs text-slate font-sans border-l border-stone pl-2.5">
+            Web Developer · Kota, RJ
+          </span>
+        </div>
 
-      <div className="flex items-center gap-3">
-        <a href="#choose" className="btn btn-p !px-4 !py-2 text-xs md:text-sm font-semibold shadow-md">
-          Start Project
-        </a>
+        {/* Nav Links + Minimal Kota Clock */}
+        <div className="hidden md:flex items-center gap-8">
+          <nav className="flex items-center gap-6 text-sm text-slate">
+            {links.map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                className="hover:text-ink transition-colors font-medium text-xs uppercase tracking-wider"
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
 
-        {/* Mobile menu button */}
-        <button
-          type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white md:hidden hover:bg-white/10"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
-        >
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
+          {/* Live Kota Clock (IST) at right - Steady calm dot */}
+          <div className="flex items-center gap-2 text-xs text-slate border-l border-stone pl-6 tabular-numbers">
+            <span className="h-2 w-2 rounded-full bg-[#25D366]" />
+            <span>Kota, India · {localTime || "IST"}</span>
+          </div>
+        </div>
+
+        {/* Mobile menu toggle */}
+        <div className="flex items-center gap-3 md:hidden">
+          <span className="text-xs text-slate tabular-numbers font-medium">
+            {localTime}
+          </span>
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-1.5 text-ink hover:text-slate"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="glass absolute top-16 inset-x-0 rounded-2xl p-5 border border-white/15 shadow-2xl flex flex-col gap-3 md:hidden"
-          >
-            {links.map(([l, h]) => (
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 top-[65px] bg-ink/10 md:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="relative md:hidden border-t border-stone bg-[#F5F6F2] px-5 py-5 space-y-3 shadow-md">
+            {links.map(([label, href]) => (
               <a
-                key={h}
-                href={h}
+                key={href}
+                href={href}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
+                className="block text-base font-medium text-ink hover:text-slate py-1.5 font-serif-heading"
               >
-                {l}
+                {label}
               </a>
             ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div className="pt-3 text-xs text-slate border-t border-stone flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-[#25D366]" />
+              <span>Kota, Rajasthan · {localTime || "IST"}</span>
+            </div>
+          </div>
+        </>
+      )}
     </header>
   );
 }
 
 // ----------------------------------------------------
-// Services Section with 3D Tilt
+// Services Section: Architectural Capability Ledger
 // ----------------------------------------------------
-const serviceDetails = [
-  { name: "Website Design", icon: Palette, desc: "Modern, bespoke Figma-to-code interfaces with high aesthetic fidelity." },
-  { name: "Frontend Development", icon: Layout, desc: "Ultra-fast React & Next.js client experiences with fluid transitions." },
-  { name: "Backend Development", icon: Server, desc: "Secure APIs, authentication, relational schemas, and serverless logic." },
-  { name: "E-commerce Development", icon: ShoppingCart, desc: "High-converting online storefronts with cart and payment gateways." },
-  { name: "Responsive Development", icon: Smartphone, desc: "Pixel-perfect rendering across mobile, tablet, laptop, and 4K screens." },
-  { name: "Website Redesign", icon: RefreshCw, desc: "Transform outdated sites into blazing, modern digital experiences." },
-  { name: "Website Maintenance", icon: Wrench, desc: "Bug fixes, speed audits, security updates, and regular backups." },
-  { name: "Custom Web Applications", icon: Cpu, desc: "Tailored SaaS tools, CRM dashboards, and database applications." },
-  { name: "SEO-Friendly Development", icon: TrendingUp, desc: "Semantic markup, OpenGraph meta, schema data, and 99+ Lighthouse." },
-  { name: "Business Website Development", icon: Building, desc: "Credible corporate web presences that capture qualified leads." },
+const CORE_SERVICES = [
+  {
+    name: "Landing page",
+    desc: "A fast, focused single-page site for a campaign, product launch, or lead generation.",
+    price: "₹2,999",
+    scope: "1 page · 3–5 days",
+  },
+  {
+    name: "Portfolio / personal site",
+    desc: "Clean showcase for consultants, designers, educators, and independent professionals.",
+    price: "₹3,999",
+    scope: "Up to 3 pages · 5–7 days",
+  },
+  {
+    name: "Business site",
+    desc: "Multi-page website for shops, clinics, coaching institutes, and local services.",
+    price: "₹5,999",
+    scope: "Up to 7 pages · 1–2 weeks",
+  },
+  {
+    name: "Online store",
+    desc: "Product catalogue, shopping cart, and UPI/card checkout for Indian customers.",
+    price: "₹11,999",
+    scope: "Catalogue & cart · 2–3 weeks",
+  },
+  {
+    name: "Booking site",
+    desc: "Online appointment scheduling with automated WhatsApp notifications and calendar.",
+    price: "₹7,999",
+    scope: "Calendar & slots · 1–2 weeks",
+  },
+  {
+    name: "Custom web app",
+    desc: "Database workflows, customer portals, internal tools, and tailored logic built for your specific process.",
+    price: "₹19,999",
+    scope: "Tailored workflows · 3–4 weeks",
+  },
 ];
 
 export function Services() {
   return (
-    <section id="services" className="relative mx-auto max-w-6xl px-5 py-24">
-      <div className="text-center mb-14">
-        <span className="text-xs font-semibold uppercase tracking-wider text-brand-2">
-          Capabilities
-        </span>
-        <h2 className="mt-1 font-display text-3xl font-bold md:text-5xl">
-          Engineered for <span className="grad">Performance</span>
+    <section id="services" className="mx-auto max-w-6xl px-5 py-24 border-t border-stone">
+      <div className="max-w-2xl mb-14">
+        <h2 className="font-serif-heading text-3xl font-medium md:text-4xl text-ink tracking-tight">
+          Services
         </h2>
-        <p className="mt-3 max-w-xl mx-auto text-white/60">
-          Everything from initial brand concept to full-stack cloud deployment, engineered with precision.
+        <p className="mt-3 text-slate text-pretty leading-relaxed">
+          Straightforward website development for businesses in India. Upfront pricing with no
+          hidden costs, agency markups, or technical confusion.
         </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {serviceDetails.map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <motion.div
-              key={s.name}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ delay: (i % 3) * 0.06 }}
-              className="h-full"
-            >
-              <Tilt3D
-                maxAngle={12}
-                scale={1.03}
-                glare={true}
-                className="card h-full p-6 flex flex-col justify-between"
-              >
-                <div>
-                  <div
-                    className="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-brand/25 to-brand-2/15 border border-white/10"
-                    style={{ transform: "translateZ(30px)" }}
-                  >
-                    <Icon size={22} className="text-brand-2" />
-                  </div>
-                  <h3
-                    className="font-display text-lg font-bold text-white"
-                    style={{ transform: "translateZ(20px)" }}
-                  >
-                    {s.name}
-                  </h3>
-                  <p
-                    className="mt-2 text-sm text-white/60 leading-relaxed"
-                    style={{ transform: "translateZ(15px)" }}
-                  >
-                    {s.desc}
-                  </p>
-                </div>
-                <div
-                  className="mt-4 flex items-center gap-1 text-xs text-brand-2 font-medium"
-                  style={{ transform: "translateZ(22px)" }}
-                >
-                  <CheckCircle size={13} />
-                  <span>Available for immediate booking</span>
-                </div>
-              </Tilt3D>
-            </motion.div>
-          );
-        })}
+      <div className="divide-y divide-stone border-t border-b border-stone">
+        {CORE_SERVICES.map((item) => (
+          <div
+            key={item.name}
+            className="group py-6 grid grid-cols-1 md:grid-cols-[1.5fr_2fr_1fr] items-baseline gap-2 md:gap-6 hover:bg-white/80 transition-all duration-150 px-4 -mx-4 rounded-xl"
+          >
+            <div>
+              <div className="font-serif-heading text-lg md:text-xl font-medium text-ink group-hover:text-indigo transition-colors">
+                {item.name}
+              </div>
+              <div className="text-xs text-slate mt-0.5">
+                {item.scope}
+              </div>
+            </div>
+            <div className="text-sm text-slate leading-relaxed">
+              {item.desc}
+            </div>
+            <div className="text-sm md:text-base font-semibold text-ink md:text-right tabular-numbers">
+              Starts at {item.price}
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Tech Stack Bar */}
-      <div className="glass mt-12 rounded-2xl p-6 border border-white/10 text-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-3">
-          Core Technologies &amp; Tooling
-        </p>
-        <div className="flex flex-wrap justify-center items-center gap-2">
-          {stack.map((t) => (
-            <span
-              key={t}
-              className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs font-medium text-white/80 hover:border-brand/40 hover:text-white transition-colors"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
+      <div className="mt-8 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate gap-3">
+        <span>
+          Need something specific? Other categories (Gym, Restaurant, Real Estate, SaaS) are
+          available in the quote builder.
+        </span>
+        <a href="#quote-builder" className="text-indigo font-medium hover:underline inline-flex items-center gap-1 shrink-0">
+          <span>Build a custom quote</span>
+          <ArrowRight size={13} />
+        </a>
       </div>
     </section>
   );
 }
 
 // ----------------------------------------------------
-// Portfolio with 3D Tilt Cards
+// Work / Portfolio Section: Plain Index Archive + Project Dossier
 // ----------------------------------------------------
 type ProjectItem = {
   id: string;
   title: string;
-  category: string;
+  type: string;
+  year: string;
+  stack: string;
+  url: string | null;
+  status: "live" | "concept";
   description: string;
-  tech: string[];
-  demo_url: string | null;
-  image_url: string | null;
+  highlights: string[];
 };
 
-const defaultPortfolio: ProjectItem[] = [
+const REAL_PROJECTS: ProjectItem[] = [
   {
-    id: "p0",
+    id: "pavitra-portfolio",
     title: "Pavitra Sharma Portfolio",
-    category: "Portfolio & Personal Brand",
-    description: "Modern developer portfolio showcasing bespoke UI design, full-stack architectures, interactive 3D elements, and real-time project solutions.",
-    tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion"],
-    demo_url: "https://my-portfolio-beta-ochre-netty7ie4y.vercel.app/",
-    image_url: null,
+    type: "Personal Developer Portfolio",
+    year: "2026",
+    stack: "Next.js, TypeScript, Tailwind CSS, Framer Motion",
+    url: "https://my-portfolio-beta-ochre-netty7ie4y.vercel.app/",
+    status: "live",
+    description: "Personal web portfolio showcasing freelance web development capabilities, transparent upfront pricing, dynamic quote calculations, and direct WhatsApp client enquiry flows.",
+    highlights: [
+      "Dynamic real-time quotation calculator",
+      "Direct WhatsApp enquiry integration",
+      "Fast static generation & editorial layout",
+    ],
   },
   {
-    id: "p1",
-    title: "Aura Luxe E-Commerce",
-    category: "E-commerce & Payments",
-    description: "High-end luxury jewelry storefront featuring real-time inventory, Razorpay & Stripe integration, and sub-second cart checkout.",
-    tech: ["Next.js 14", "Tailwind CSS", "Supabase", "Stripe API"],
-    demo_url: "https://example.com/ecommerce-demo",
-    image_url: null,
+    id: "aura-luxe",
+    title: "Aura Luxe Storefront",
+    type: "Online Store & UPI Checkout",
+    year: "2025",
+    stack: "Next.js, Supabase, Tailwind CSS",
+    url: null,
+    status: "concept",
+    description: "E-commerce architecture prototype designed for Indian retail and apparel shops with streamlined mobile cart checkout, UPI payments, and order confirmation on WhatsApp.",
+    highlights: [
+      "Mobile-optimized product catalogue",
+      "Instant UPI QR & card checkout flow",
+      "Automated WhatsApp order confirmation",
+    ],
   },
   {
-    id: "p2",
-    title: "Apex Media Creative Portfolio",
-    category: "Portfolio & 3D Interactive",
-    description: "Interactive agency showcase with WebGL 3D depth tilt, case-study micro-animations, and dynamic blog CMS.",
-    tech: ["Next.js", "WebGL / Canvas", "Framer Motion", "Tailwind"],
-    demo_url: "https://example.com/portfolio-demo",
-    image_url: null,
+    id: "zenith-clinic",
+    title: "Zenith Clinic Booking",
+    type: "Appointment Scheduling System",
+    year: "2025",
+    stack: "React, Node.js, PostgreSQL",
+    url: null,
+    status: "concept",
+    description: "Doctor appointment management platform for private clinics with automated WhatsApp booking reminders, schedule slot management, and patient intake records.",
+    highlights: [
+      "Real-time slot availability picker",
+      "WhatsApp automated booking reminders",
+      "Doctor daily schedule dashboard",
+    ],
   },
   {
-    id: "p3",
-    title: "Zenith Clinic Booking System",
-    category: "Web App & Online Booking",
-    description: "Appointment booking platform with automated WhatsApp notifications, customer portal, and admin doctor scheduling dashboard.",
-    tech: ["React", "Node.js", "Supabase Auth", "PostgreSQL"],
-    demo_url: "https://example.com/booking-demo",
-    image_url: null,
+    id: "apex-media",
+    title: "Apex Media Studio",
+    type: "Creative Portfolio & Agency Site",
+    year: "2024",
+    stack: "Next.js, Tailwind CSS",
+    url: null,
+    status: "concept",
+    description: "Content showcase for media studios with high-performance responsive layout, case study archives, and fluid responsive grid typography.",
+    highlights: [
+      "Editorial case study archive layout",
+      "High-performance responsive image galleries",
+      "Accessible left-aligned composition",
+    ],
   },
 ];
 
 export function Portfolio() {
-  const [items, setItems] = useState<ProjectItem[]>(defaultPortfolio);
-
-  useEffect(() => {
-    supabase
-      .from("portfolio_projects")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          const hasPavitra = data.some((p: any) => p.demo_url && (p.demo_url.includes("my-portfolio-beta-ochre-netty7ie4y") || p.demo_url.includes("my-portfolio-pavitra6")));
-          if (!hasPavitra) {
-            setItems([defaultPortfolio[0], ...(data as ProjectItem[])]);
-          } else {
-            setItems(data as ProjectItem[]);
-          }
-        }
-      });
-  }, []);
+  const [activeProject, setActiveProject] = useState<ProjectItem>(REAL_PROJECTS[0]);
 
   return (
-    <section id="portfolio" className="relative mx-auto max-w-7xl px-5 py-24">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-brand">
-            Showcase
-          </span>
-          <h2 className="mt-1 font-display text-3xl font-bold md:text-5xl">
-            Selected <span className="grad">Work &amp; Case Studies</span>
-          </h2>
-          <p className="mt-2 text-white/60">
-            A glimpse into recent full-stack applications, interactive experiences, and commercial websites.
-          </p>
-        </div>
-        <div className="text-xs text-white/40">
-          Interactive 3D Project Cards
-        </div>
-      </div>
-
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((p, idx) => (
-          <motion.div
-            key={p.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-30px" }}
-            transition={{ delay: idx * 0.1 }}
-            className="h-full"
-          >
-            <Tilt3D
-              maxAngle={12}
-              scale={1.03}
-              glare={true}
-              className="card h-full overflow-hidden flex flex-col justify-between"
-            >
-              <div>
-                {/* 3D Preview Image / Banner */}
-                <div
-                  className="relative h-48 w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-brand/35 via-brand/15 to-brand-2/25 border-b border-white/10"
-                  style={{ transform: "translateZ(10px)" }}
-                >
-                  {p.image_url ? (
-                    <img
-                      src={p.image_url}
-                      alt={`${p.title} preview`}
-                      className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                  ) : (
-                    <div className="relative h-full w-full grid place-items-center p-6 text-center">
-                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 via-transparent to-black/30" />
-                      <div className="relative z-10">
-                        <span className="inline-block rounded-full bg-brand/25 border border-brand/40 px-3 py-1 text-xs font-semibold text-brand-2 mb-2">
-                          {p.category}
-                        </span>
-                        <p className="font-display text-lg font-bold text-white">{p.title}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Body Content */}
-                <div className="p-6">
-                  <p
-                    className="text-xs font-semibold uppercase tracking-wider text-brand-2"
-                    style={{ transform: "translateZ(20px)" }}
-                  >
-                    {p.category}
-                  </p>
-                  <h3
-                    className="mt-1 font-display text-xl font-bold text-white"
-                    style={{ transform: "translateZ(25px)" }}
-                  >
-                    {p.title}
-                  </h3>
-                  <p
-                    className="mt-2 text-sm text-white/65 leading-relaxed"
-                    style={{ transform: "translateZ(15px)" }}
-                  >
-                    {p.description}
-                  </p>
-
-                  {/* Tech stack badges */}
-                  <div
-                    className="mt-4 flex flex-wrap gap-1.5"
-                    style={{ transform: "translateZ(18px)" }}
-                  >
-                    {p.tech?.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full bg-white/5 border border-white/10 px-2.5 py-0.5 text-[11px] text-white/80"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div
-                className="p-6 pt-0 border-t border-white/5 mt-4"
-                style={{ transform: "translateZ(24px)" }}
-              >
-                {p.demo_url ? (
-                  <a
-                    href={p.demo_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-g w-full justify-center !py-2 text-xs font-semibold"
-                  >
-                    <ExternalLink size={14} />
-                    <span>View Live Project</span>
-                  </a>
-                ) : (
-                  <span className="inline-block text-xs text-white/40">
-                    Live demo link available upon request
-                  </span>
-                )}
-              </div>
-            </Tilt3D>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ----------------------------------------------------
-// Process / How It Works
-// ----------------------------------------------------
-export function How() {
-  const stepsData = [
-    {
-      title: "Choose Your Website Foundation",
-      desc: "Pick from E-commerce, Business, Custom Web App, or Portfolio. Every base comes ready for rapid customization.",
-    },
-    {
-      title: "Customize Specifications & Needs",
-      desc: "Specify exact pages, payment gateways, custom animations, design style, timeline, and reference inspirations.",
-    },
-    {
-      title: "Submit & Project Scoping Call",
-      desc: "I review your specifications, prepare the architecture, and contact you with a transparent quote and delivery schedule.",
-    },
-    {
-      title: "Design, Develop, Test & Launch",
-      desc: "Iterative development with live staging previews, rigorous cross-device QA, speed optimization, and seamless deployment.",
-    },
-  ];
-
-  return (
-    <section id="how" className="relative mx-auto max-w-4xl px-5 py-24">
-      <div className="text-center mb-14">
-        <span className="text-xs font-semibold uppercase tracking-wider text-brand-2">
-          Methodology
-        </span>
-        <h2 className="mt-1 font-display text-3xl font-bold md:text-5xl">
-          How It <span className="grad">Works</span>
+    <section id="work" className="mx-auto max-w-6xl px-5 py-24 border-t border-stone">
+      <div className="max-w-2xl mb-14">
+        <h2 className="font-serif-heading text-3xl font-medium md:text-4xl text-ink tracking-tight">
+          Selected work
         </h2>
-        <p className="mt-3 text-white/60">
-          A seamless 4-step workflow from your initial idea to live production.
+        <p className="mt-3 text-slate text-pretty leading-relaxed">
+          A plain index of live projects and working concepts. Real links only; concept projects are
+          clearly labeled.
         </p>
       </div>
 
-      <ol className="relative space-y-10 border-l border-white/15 pl-8 md:pl-10">
-        {stepsData.map((item, i) => (
-          <motion.li
-            key={item.title}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-30px" }}
-            transition={{ delay: i * 0.12 }}
-            className="relative"
-          >
-            {/* 3D Illuminated Step Bubble */}
-            <span className="absolute -left-[3.35rem] md:-left-[3.85rem] grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-brand to-brand-2 font-display font-extrabold text-black shadow-[0_0_20px_rgba(139,123,255,0.4)]">
-              {String(i + 1).padStart(2, "0")}
+      <div className="grid gap-8 lg:grid-cols-[1.5fr_1.1fr] items-start">
+        {/* Plain Index Archive Table */}
+        <div className="divide-y divide-stone border-t border-b border-stone">
+          {REAL_PROJECTS.map((project) => {
+            const isActive = activeProject.id === project.id;
+            return (
+              <div
+                key={project.id}
+                onMouseEnter={() => setActiveProject(project)}
+                onFocus={() => setActiveProject(project)}
+                onClick={() => setActiveProject(project)}
+                tabIndex={0}
+                className={`py-5 px-4 -mx-4 rounded-xl cursor-pointer transition-all duration-150 ${
+                  isActive
+                    ? "bg-white border border-stone shadow-xs"
+                    : "hover:bg-white/60 border border-transparent"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-serif-heading text-base md:text-lg font-medium text-ink">
+                      {project.title}
+                    </span>
+                    <span className="text-xs text-slate">({project.year})</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-xs">
+                    <span className="text-slate hidden sm:inline">{project.type}</span>
+                    {project.status === "live" && project.url ? (
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo font-medium inline-flex items-center gap-1 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#25D366]" />
+                        <span>Live</span>
+                        <ExternalLink size={12} />
+                      </a>
+                    ) : (
+                      <span className="text-slate font-medium text-xs bg-[#ECEFEA] px-2.5 py-1 rounded-full">
+                        Concept
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-1 text-xs text-slate truncate">
+                  {project.stack}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Focus Preview Frame: Architectural Project Dossier */}
+        <div className="border border-stone bg-white rounded-xl sticky top-24 overflow-hidden shadow-xs p-6 md:p-7 space-y-5">
+          <div className="flex items-center justify-between border-b border-stone pb-4">
+            <span className="text-xs text-slate font-medium uppercase tracking-wider">
+              {activeProject.type} · {activeProject.year}
             </span>
-            <div className="card p-6 border border-white/10 hover:border-brand/40">
-              <h3 className="font-display text-xl font-bold text-white">{item.title}</h3>
-              <p className="mt-2 text-sm text-white/65 leading-relaxed">{item.desc}</p>
+            {activeProject.status === "live" ? (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1D5E37] bg-[#EEF5F1] px-2.5 py-1 rounded-full border border-[#C5DFD0]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#25D366]" />
+                <span>Live Project</span>
+              </span>
+            ) : (
+              <span className="text-xs font-medium text-slate bg-[#ECEFEA] px-2.5 py-1 rounded-full">
+                Concept Prototype
+              </span>
+            )}
+          </div>
+
+          <div>
+            <h3 className="font-serif-heading text-2xl font-medium text-ink">
+              {activeProject.title}
+            </h3>
+            <p className="mt-2 text-sm text-slate leading-relaxed">
+              {activeProject.description}
+            </p>
+          </div>
+
+          {/* Key Deliverables */}
+          <div className="space-y-2 pt-2">
+            <div className="text-xs font-semibold text-slate uppercase tracking-wider">
+              Key Features
             </div>
-          </motion.li>
-        ))}
-      </ol>
+            <ul className="space-y-1.5 text-xs text-ink">
+              {activeProject.highlights.map((h, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <span className="h-1 w-1 rounded-full bg-indigo shrink-0" />
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="pt-3 border-t border-stone space-y-1.5">
+            <div className="text-xs font-semibold text-slate uppercase tracking-wider">
+              Technology Stack
+            </div>
+            <div className="text-xs font-medium text-ink">
+              {activeProject.stack}
+            </div>
+          </div>
+
+          <div className="pt-2">
+            {activeProject.status === "live" && activeProject.url ? (
+              <a
+                href={activeProject.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-p w-full !py-3 text-xs font-semibold justify-center"
+              >
+                <span>Visit live website</span>
+                <ExternalLink size={14} />
+              </a>
+            ) : (
+              <div className="text-xs text-slate italic p-3 bg-[#F8F9F7] border border-stone rounded-lg text-center">
+                Interactive prototype built as client demo.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
 
 // ----------------------------------------------------
-// Contact & Inquiry
+// Process: Connected Architectural Milestone Flow
+// ----------------------------------------------------
+const PROCESS_STEPS = [
+  {
+    phase: "Phase 1",
+    timeframe: "Days 1–2",
+    title: "Scope & quote",
+    desc: "We discuss your business needs, determine the exact pages and features, and agree on a transparent price and timeline before any work begins.",
+    deliverable: "Fixed quote & written scope",
+  },
+  {
+    phase: "Phase 2",
+    timeframe: "Days 3–5",
+    title: "Design & draft",
+    desc: "I share layout wireframes and structure for your review. We adjust everything until you are completely satisfied with how it will look.",
+    deliverable: "Approved design drafts",
+  },
+  {
+    phase: "Phase 3",
+    timeframe: "Days 6–10",
+    title: "Development & content",
+    desc: "I write clean, fast code and integrate your contact forms, WhatsApp links, and payment systems. Everything is tested on real mobile phones.",
+    deliverable: "Fully responsive website code",
+  },
+  {
+    phase: "Phase 4",
+    timeframe: "Days 11–14",
+    title: "Testing & launch",
+    desc: "We do a final walkthrough together, connect your domain name, configure search engine indexing, and make your website live.",
+    deliverable: "Live custom domain & Google index",
+  },
+];
+
+export function How() {
+  return (
+    <section id="how" className="mx-auto max-w-6xl px-5 py-24 border-t border-stone">
+      <div className="max-w-2xl mb-14">
+        <h2 className="font-serif-heading text-3xl font-medium md:text-4xl text-ink tracking-tight">
+          How It Works
+        </h2>
+        <p className="mt-3 text-slate text-pretty leading-relaxed">
+          A predictable 4-step process from our first message to a live website. Clear milestones
+          and direct communication throughout.
+        </p>
+      </div>
+
+      {/* Connected Architectural Milestone Flow */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {PROCESS_STEPS.map((item, idx) => (
+          <div
+            key={item.phase}
+            className="p-6 border border-stone bg-white rounded-xl flex flex-col justify-between hover:border-slate/60 transition-all duration-150 shadow-2xs"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4 border-b border-stone/60 pb-3">
+                <span className="font-serif-heading text-lg font-medium text-ink">
+                  0{idx + 1}
+                </span>
+                <span className="text-xs font-medium bg-[#ECEFEA] text-slate px-2.5 py-1 rounded-full">
+                  {item.timeframe}
+                </span>
+              </div>
+              <h3 className="font-serif-heading text-lg font-medium text-ink mb-2">
+                {item.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+            <div className="mt-6 pt-3 border-t border-stone/50 text-xs text-slate font-medium">
+              Deliverable: {item.deliverable}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ----------------------------------------------------
+// About: Studio Colophon & Honest Story
+// ----------------------------------------------------
+export function About() {
+  return (
+    <section id="about" className="mx-auto max-w-6xl px-5 py-24 border-t border-stone">
+      <div className="grid gap-12 md:grid-cols-[280px_1fr] items-start">
+        {/* Studio Colophon Plaque */}
+        <div className="p-6 border border-stone bg-[#ECEFEA] rounded-xl flex flex-col items-center text-center space-y-4 shadow-xs">
+          {/* Author SVG Studio Seal Monogram */}
+          <div className="h-20 w-20 rounded-full bg-white border border-stone grid place-items-center text-ink shadow-2xs relative">
+            <svg
+              className="w-16 h-16 text-ink"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <circle cx="50" cy="50" r="46" stroke="#D9DED7" strokeWidth="1.5" strokeDasharray="3 3" />
+              <circle cx="50" cy="50" r="41" stroke="#2C4036" strokeWidth="1" />
+              <text
+                x="50"
+                y="58"
+                textAnchor="middle"
+                fontFamily="var(--font-serif)"
+                fontSize="26"
+                fontWeight="500"
+                fill="#17201B"
+              >
+                PS
+              </text>
+            </svg>
+          </div>
+
+          <div>
+            <div className="font-serif-heading text-lg font-medium text-ink">
+              Pavitra Sharma
+            </div>
+            <div className="text-xs text-slate mt-0.5">
+              Independent Web Developer
+            </div>
+          </div>
+
+          <div className="text-xs text-slate border-t border-stone/60 pt-3 w-full space-y-1.5 text-left">
+            <div className="flex items-center gap-1.5">
+              <MapPin size={13} className="text-slate shrink-0" />
+              <span className="font-medium text-ink">Kota, Rajasthan</span>
+            </div>
+            <div className="text-xs text-slate pl-4">
+              25.2138° N, 75.8648° E
+            </div>
+            <div className="flex items-center gap-1.5 pt-1">
+              <Clock size={13} className="text-slate shrink-0" />
+              <span>09:00 – 21:00 IST (Mon–Sat)</span>
+            </div>
+            <div className="flex items-center gap-1.5 pt-1">
+              <span className="h-2 w-2 rounded-full bg-[#25D366] shrink-0" />
+              <span className="text-[#1D5E37] font-medium">Available for new projects</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Honest First-Person Story & Commitments */}
+        <div className="space-y-6 max-w-2xl">
+          <div>
+            <h2 className="font-serif-heading text-3xl font-medium md:text-4xl text-ink tracking-tight">
+              About me
+            </h2>
+          </div>
+
+          <div className="space-y-4 text-base sm:text-lg leading-relaxed">
+            <p className="text-ink font-serif-heading text-xl md:text-2xl font-normal text-pretty">
+              Practical websites that bring real customers to your business, built by an independent developer you can reach directly.
+            </p>
+            <p className="text-slate text-pretty leading-relaxed text-sm sm:text-base">
+              I&apos;m Pavitra Sharma, an independent web developer based in Kota, Rajasthan. I build
+              dependable websites for small businesses—shops, medical clinics, coaching institutes, and
+              restaurants—who want a clear online presence without technical confusion or agency markups.
+            </p>
+            <p className="text-slate text-pretty leading-relaxed text-sm sm:text-base">
+              When you work with me, there are no account managers, sales intermediaries, or junior
+              handoffs. I handle design, code, and deployment personally, and remain available on WhatsApp
+              whenever you need updates or advice.
+            </p>
+          </div>
+
+          {/* 3 Studio Commitments */}
+          <div className="pt-6 border-t border-stone grid grid-cols-1 sm:grid-cols-3 gap-5 text-xs">
+            <div className="space-y-1">
+              <div className="font-semibold text-ink text-sm">Direct Developer</div>
+              <div className="text-slate leading-relaxed">Talk straight to the person writing the code.</div>
+            </div>
+            <div className="space-y-1">
+              <div className="font-semibold text-ink text-sm">Fixed Pricing</div>
+              <div className="text-slate leading-relaxed">Clear upfront quotation with itemized deliverables.</div>
+            </div>
+            <div className="space-y-1">
+              <div className="font-semibold text-ink text-sm">Long-Term Care</div>
+              <div className="text-slate leading-relaxed">Direct WhatsApp support whenever you need help.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ----------------------------------------------------
+// Contact: WhatsApp First, then Email, then Short Form
 // ----------------------------------------------------
 export function Contact() {
-  const [f, setF] = useState({ name: "", email: "", message: "" });
-  const [st, setSt] = useState<"idle" | "busy" | "ok" | "err">("idle");
-  const [msg, setMsg] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
 
-  const send = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSt("busy");
+    if (!form.name.trim()) {
+      setStatus("error");
+      setFeedbackMessage("Please enter your name.");
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+      setStatus("error");
+      setFeedbackMessage("Please enter a valid email address.");
+      return;
+    }
+    if (form.message.trim().length < 10) {
+      setStatus("error");
+      setFeedbackMessage("Please write a message with at least 10 characters so I know how to help.");
+      return;
+    }
+
+    setStatus("submitting");
     try {
-      const r = await fetch("/api/contact", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(f),
+        body: JSON.stringify(form),
       });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.error);
-      setSt("ok");
-      setF({ name: "", email: "", message: "" });
-    } catch (x: any) {
-      setMsg(x.message || "Could not send message. Please try WhatsApp directly.");
-      setSt("err");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setStatus("success");
+      setForm({ name: "", email: "", message: "" });
+    } catch (err: any) {
+      setStatus("error");
+      setFeedbackMessage(err.message || "Could not send message. Please message me directly on WhatsApp.");
     }
   };
 
   return (
-    <section id="contact" className="relative mx-auto max-w-5xl px-5 py-24">
-      <div className="text-center mb-14">
-        <span className="text-xs font-semibold uppercase tracking-wider text-brand">
-          Get in Touch
-        </span>
-        <h2 className="mt-1 font-display text-3xl font-bold md:text-5xl">
-          Let&apos;s Build Something <span className="grad">Extraordinary</span>
+    <section id="contact" className="mx-auto max-w-6xl px-5 py-24 border-t border-stone">
+      <div className="max-w-2xl mb-14">
+        <h2 className="font-serif-heading text-3xl font-medium md:text-4xl text-ink tracking-tight">
+          Contact
         </h2>
-        <p className="mt-3 text-white/60">
-          Have an idea, project, or question? Send a message or chat directly on WhatsApp.
+        <p className="mt-3 text-slate text-pretty leading-relaxed">
+          Reach out directly to discuss your website. WhatsApp is usually the fastest way to get a
+          response.
         </p>
       </div>
 
-      <div className="grid gap-10 md:grid-cols-2">
-        {/* Contact info column */}
+      <div className="grid gap-10 md:grid-cols-2 items-start">
+        {/* Contact direct channels: WhatsApp first, then Email */}
         <div className="space-y-6">
-          <div className="card p-6 border border-white/10">
-            <h3 className="font-display text-xl font-bold text-white mb-2">Direct Communication</h3>
-            <p className="text-sm text-white/60 mb-6">
-              I typically reply within a few hours. For immediate project discussions, WhatsApp is fastest.
-            </p>
+          <div className="border border-stone bg-white rounded-xl p-6 md:p-8 space-y-6 shadow-xs">
+            <div>
+              <h3 className="font-serif-heading text-xl font-medium text-ink mb-2">
+                Direct conversation
+              </h3>
+              <p className="text-sm text-slate leading-relaxed">
+                For project questions, quotations, or timeline discussions, send me a message on
+                WhatsApp. I usually reply within a few hours.
+              </p>
+            </div>
 
             <div className="space-y-3">
+              {/* WhatsApp First */}
               <a
-                className="btn btn-p w-full justify-center !py-3 text-sm font-semibold shadow-lg"
                 href={site.wa}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="btn btn-wa text-[#17201B] w-full !py-3.5 text-sm font-semibold justify-center"
               >
                 <MessageCircle size={18} />
-                <span>Chat on WhatsApp ({site.phone})</span>
+                <span>Message on WhatsApp ({site.phone})</span>
               </a>
 
+              {/* Email Second */}
               <a
-                className="btn btn-g w-full justify-center !py-3 text-sm"
                 href={`mailto:${site.email}`}
+                className="btn btn-g w-full !py-3.5 text-sm justify-center"
               >
                 <Mail size={18} />
                 <span>{site.email}</span>
               </a>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between">
-              <span className="text-xs text-white/40">Location: {site.city}</span>
-              <div className="flex gap-3">
-                <a
-                  aria-label="LinkedIn Profile"
-                  href={site.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-                >
-                  <Linkedin size={20} />
-                </a>
-                <a
-                  aria-label="GitHub Profile"
-                  href={site.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-                >
-                  <Github size={20} />
-                </a>
-              </div>
+            <div className="pt-4 border-t border-stone text-xs text-slate space-y-1">
+              <div className="font-medium text-ink">Pavitra Sharma · Independent Studio</div>
+              <div>Location: Kota, Rajasthan · Operating in Indian Standard Time (IST)</div>
+              <div>Typical response time: Under 2 hours during daytime.</div>
             </div>
           </div>
         </div>
 
-        {/* Form column */}
+        {/* Short Contact Form */}
         <form
-          onSubmit={send}
-          className="glass space-y-4 rounded-3xl p-6 md:p-8 border border-white/10 shadow-xl"
+          onSubmit={handleSubmit}
+          className="border border-stone bg-white rounded-xl p-6 md:p-8 space-y-4 shadow-xs"
         >
-          <h3 className="font-display text-xl font-bold text-white">Send a Quick Message</h3>
+          <h3 className="font-serif-heading text-xl font-medium text-ink">
+            Send an enquiry
+          </h3>
 
           <div>
-            <label className="text-xs uppercase font-semibold text-white/50 block mb-1">
-              Your Name
+            <label className="block text-xs font-semibold text-ink mb-1.5">
+              Your name *
             </label>
             <input
               required
-              className="inp"
-              placeholder="e.g. John Doe"
-              value={f.name}
-              onChange={(e) => setF({ ...f, name: e.target.value })}
+              className="inp text-sm"
+              placeholder="e.g. Amit Sharma"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="text-xs uppercase font-semibold text-white/50 block mb-1">
-              Email Address
+            <label className="block text-xs font-semibold text-ink mb-1.5">
+              Email address *
             </label>
             <input
               required
               type="email"
-              className="inp"
-              placeholder="name@company.com"
-              value={f.email}
-              onChange={(e) => setF({ ...f, email: e.target.value })}
+              className="inp text-sm"
+              placeholder="e.g. amit@example.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="text-xs uppercase font-semibold text-white/50 block mb-1">
-              Message
+            <label className="block text-xs font-semibold text-ink mb-1.5">
+              Message *
             </label>
             <textarea
               required
               minLength={10}
-              className="inp min-h-32"
-              placeholder="Tell me about your project, timeline, or requirements..."
-              value={f.message}
-              onChange={(e) => setF({ ...f, message: e.target.value })}
+              rows={4}
+              className="inp text-sm"
+              placeholder="Tell me briefly about your business and what kind of website you need..."
+              value={form.message}
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
             />
           </div>
 
           <button
             type="submit"
-            className="btn btn-p w-full justify-center !py-3 text-sm font-semibold"
-            disabled={st === "busy"}
+            disabled={status === "submitting"}
+            className="btn btn-p w-full !py-3.5 text-sm font-semibold justify-center"
           >
-            {st === "busy" ? (
+            {status === "submitting" ? (
               <>
                 <Loader2 className="animate-spin" size={16} />
-                <span>Sending...</span>
+                <span>Sending enquiry...</span>
               </>
             ) : (
-              <span>Send Message</span>
+              <span>Send enquiry</span>
             )}
           </button>
 
-          {st === "ok" && (
-            <p role="status" className="rounded-xl bg-brand-2/15 p-3 text-center text-sm font-medium text-brand-2 border border-brand-2/30">
-              ✓ Message received! I will get back to you shortly.
-            </p>
+          {status === "success" && (
+            <div
+              role="status"
+              className="p-3 bg-[#EEF5F1] border border-[#C5DFD0] text-[#1D5E37] rounded-md text-xs flex items-center gap-2"
+            >
+              <CheckCircle2 size={16} className="shrink-0" />
+              <span>Enquiry received. I will reply to you shortly.</span>
+            </div>
           )}
 
-          {st === "err" && (
-            <p role="alert" className="rounded-xl bg-red-400/15 p-3 text-center text-sm text-red-200 border border-red-400/30">
-              {msg}
-            </p>
+          {status === "error" && (
+            <div
+              role="alert"
+              className="p-3 bg-[#FBF0EE] border border-[#F2C4BE] text-[#9A281E] rounded-md text-xs flex items-center gap-2"
+            >
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{feedbackMessage}</span>
+            </div>
           )}
         </form>
       </div>
 
-      <footer className="mt-20 border-t border-white/10 pt-8 text-center text-sm text-white/40">
-        <p>© {new Date().getFullYear()} {site.name} · All rights reserved.</p>
-        <p className="mt-1 text-xs text-white/30">
-          Crafted with Next.js, TypeScript, Tailwind CSS &amp; 3D WebGL Canvas
-        </p>
+      {/* Quiet Restrained Footer */}
+      <footer className="mt-24 border-t border-stone pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate gap-4">
+        <div>
+          © {new Date().getFullYear()} {site.name} · Kota, Rajasthan. All rights reserved.
+        </div>
+        <div className="flex flex-wrap gap-5">
+          <a
+            href={site.wa}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-ink transition-colors"
+          >
+            WhatsApp
+          </a>
+          <a
+            href={`mailto:${site.email}`}
+            className="hover:text-ink transition-colors"
+          >
+            Email
+          </a>
+          <a
+            href={site.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-ink transition-colors"
+          >
+            GitHub
+          </a>
+          <a
+            href={site.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-ink transition-colors"
+          >
+            LinkedIn
+          </a>
+          <a
+            href="#"
+            className="hover:text-ink transition-colors text-slate"
+          >
+            Back to top ↑
+          </a>
+        </div>
       </footer>
     </section>
   );
 }
 
 // ----------------------------------------------------
-// WhatsApp Floating CTA
+// Quiet, Small Floating WhatsApp Button
 // ----------------------------------------------------
 export function WhatsAppFloat() {
   return (
@@ -660,11 +896,10 @@ export function WhatsAppFloat() {
       href={site.wa}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat directly on WhatsApp"
-      className="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-black shadow-[0_4px_25px_rgba(37,211,102,0.5)] transition-all duration-300 hover:scale-110 active:scale-95"
+      aria-label="Message on WhatsApp"
+      className="fixed bottom-6 right-6 z-40 grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-[#17201B] border border-[#1ea952] shadow-sm hover:opacity-95 active:scale-95 transition-all"
     >
-      <span className="absolute -inset-1 rounded-full bg-[#25D366] opacity-30 animate-ping pointer-events-none" />
-      <MessageCircle size={26} className="relative z-10" />
+      <MessageCircle size={22} />
     </a>
   );
 }

@@ -68,7 +68,7 @@ export default function Categories() {
                       <Icon size={24} className="text-brand-2" />
                     </div>
                     {isSelected && (
-                      <span className="rounded-full bg-brand/20 border border-brand/50 px-2.5 py-0.5 text-xs font-semibold text-brand">
+                      <span className="rounded-full bg-brand/20 border border-brand/50 px-2.5 py-1 text-xs font-semibold text-brand">
                         Selected ✓
                       </span>
                     )}
@@ -81,7 +81,7 @@ export default function Categories() {
                         {c.name}
                       </h3>
                     </div>
-                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-2/15 border border-brand-2/30 px-2.5 py-0.5 text-xs font-bold text-brand-2 shadow-sm">
+                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-2/15 border border-brand-2/30 px-2.5 py-1 text-xs font-bold text-brand-2 shadow-sm">
                       Starting From {formatINR(c.startingPrice)}
                     </div>
                     <p className="mt-2 text-sm text-white/65 leading-relaxed">
@@ -94,7 +94,7 @@ export default function Categories() {
                     {c.ex.map((e) => (
                       <span
                         key={e}
-                        className="rounded-full bg-white/5 border border-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/70"
+                        className="rounded-full bg-white/5 border border-white/10 px-2.5 py-1 text-xs font-medium text-white/70"
                       >
                         {e}
                       </span>

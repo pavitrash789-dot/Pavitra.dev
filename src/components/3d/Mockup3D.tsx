@@ -108,7 +108,7 @@ export default function Mockup3D() {
             <div className="relative rounded-xl overflow-hidden p-4 bg-gradient-to-br from-brand/25 via-brand/10 to-brand-2/15 border border-white/10">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="inline-block rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-brand-2 tracking-wide uppercase">
+                  <span className="inline-block rounded-md bg-white/10 px-2.5 py-1 text-xs font-semibold text-brand-2 tracking-wide uppercase">
                     Production Build
                   </span>
                   <h4 className="mt-1 font-display font-bold text-sm text-white">Next-Gen Web Architecture</h4>
@@ -126,7 +126,7 @@ export default function Mockup3D() {
                   { label: "Best Practices", val: "100%", tone: "text-sky-300" },
                 ].map((stat, i) => (
                   <div key={i} className="rounded-lg bg-black/40 p-2 border border-white/5">
-                    <p className="text-[10px] text-white/50">{stat.label}</p>
+                    <p className="text-xs text-white/50">{stat.label}</p>
                     <p className={`font-display text-xs font-bold ${stat.tone}`}>{stat.val}</p>
                   </div>
                 ))}
@@ -147,7 +147,7 @@ export default function Mockup3D() {
                     transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
                   />
                 </div>
-                <p className="text-[11px] text-white/50">Full-stack dynamic routing & API integration</p>
+                <p className="text-xs text-white/50">Full-stack dynamic routing & API integration</p>
               </div>
 
               <div className="rounded-xl bg-white/5 p-3 border border-white/5 space-y-2">
@@ -162,7 +162,7 @@ export default function Mockup3D() {
                     transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
                   />
                 </div>
-                <p className="text-[11px] text-white/50">Native 60 FPS WebGL perspective physics</p>
+                <p className="text-xs text-white/50">Native 60 FPS WebGL perspective physics</p>
               </div>
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function Mockup3D() {
             <Zap size={16} />
           </div>
           <div>
-            <p className="text-[10px] uppercase font-bold text-emerald-300">Fast & Responsive</p>
+            <p className="text-xs uppercase font-bold text-emerald-300">Fast & Responsive</p>
             <p className="text-xs font-semibold text-white">Lighthouse 99+</p>
           </div>
         </motion.div>
@@ -195,7 +195,7 @@ export default function Mockup3D() {
             <CheckCircle2 size={16} />
           </div>
           <div>
-            <p className="text-[10px] uppercase font-bold text-brand-2">Modern Stack</p>
+            <p className="text-xs uppercase font-bold text-brand-2">Modern Stack</p>
             <p className="text-xs font-semibold text-white">Next.js & Supabase</p>
           </div>
         </motion.div>

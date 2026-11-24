@@ -286,7 +286,7 @@ export default function Pricing() {
                 }`}
               >
                 <div className="text-xs font-semibold">{cat.name}</div>
-                <div className="mt-0.5 text-[11px] font-bold text-brand-2">
+                <div className="mt-0.5 text-xs font-bold text-brand-2">
                   Starting From {formatINR(cat.startingPrice)}
                 </div>
               </button>
@@ -337,13 +337,13 @@ export default function Pricing() {
                         {pkg.name}
                       </span>
                       {isPopular && (
-                        <span className="flex items-center gap-1 rounded-full bg-brand-2/20 border border-brand-2/40 px-2.5 py-0.5 text-xs font-semibold text-brand-2 shadow-sm">
+                        <span className="flex items-center gap-1 rounded-full bg-brand-2/20 border border-brand-2/40 px-2.5 py-1 text-xs font-semibold text-brand-2 shadow-sm">
                           <Flame size={12} />
                           {pkg.badge}
                         </span>
                       )}
                       {!isPopular && pkg.badge && (
-                        <span className="rounded-full bg-white/5 border border-white/10 px-2.5 py-0.5 text-xs font-medium text-white/60">
+                        <span className="rounded-full bg-white/5 border border-white/10 px-2.5 py-1 text-xs font-medium text-white/60">
                           {pkg.badge}
                         </span>
                       )}
@@ -369,7 +369,7 @@ export default function Pricing() {
 
                     {/* Deliverables Checklist */}
                     <div className="space-y-2.5 mb-8">
-                      <div className="text-[11px] font-semibold uppercase tracking-wider text-white/40">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-white/40">
                         What&apos;s Included:
                       </div>
                       {pkg.features.map((feature) => (
@@ -395,7 +395,7 @@ export default function Pricing() {
                       <span>Choose This Plan</span>
                       <ArrowRight size={16} />
                     </button>
-                    <div className="mt-2 text-center text-[11px] text-white/40">
+                    <div className="mt-2 text-center text-xs text-white/40">
                       Zero upfront charge · Instant quote calculation
                     </div>
                   </div>
@@ -483,8 +483,8 @@ export default function Pricing() {
                       }`}
                     >
                       <div className="text-xs font-bold">{pkg.name}</div>
-                      <div className="text-[11px] text-brand-2 mt-0.5">{formatINR(tierPrice)}</div>
-                      <div className="text-[10px] text-white/40 mt-0.5">Up to {pkg.maxPages} pgs</div>
+                      <div className="text-xs text-brand-2 mt-0.5">{formatINR(tierPrice)}</div>
+                      <div className="text-xs text-white/40 mt-0.5">Up to {pkg.maxPages} pgs</div>
                     </button>
                   );
                 })}
@@ -501,7 +501,7 @@ export default function Pricing() {
                   <span className="text-xs text-white/50">
                     Included: <strong className="text-white">{breakdown.includedPages}</strong>
                   </span>
-                  <span className="rounded-lg bg-brand/20 border border-brand/40 px-2 py-0.5 text-xs font-bold text-brand">
+                  <span className="rounded-lg bg-brand/20 border border-brand/40 px-2.5 py-1 text-xs font-bold text-brand">
                     {pages} Pages
                   </span>
                 </div>
@@ -516,7 +516,7 @@ export default function Pricing() {
                 className="w-full accent-brand h-2 bg-white/10 rounded-lg cursor-pointer"
               />
 
-              <div className="flex justify-between text-[11px] text-white/40 mt-1">
+              <div className="flex justify-between text-xs text-white/40 mt-1">
                 <span>1 Page (Single Page/Landing)</span>
                 <span>12 Pages (Standard)</span>
                 <span>25 Pages (Large Site)</span>
@@ -544,7 +544,7 @@ export default function Pricing() {
                 <label className="text-xs uppercase font-bold tracking-wider text-white/60">
                   4. Additional Features &amp; Modules
                 </label>
-                <span className="text-[11px] text-white/40">Select all that apply</span>
+                <span className="text-xs text-white/40">Select all that apply</span>
               </div>
 
               <div className="grid gap-2 sm:grid-cols-2">
@@ -573,7 +573,7 @@ export default function Pricing() {
                         </div>
                         <div>
                           <div className="text-xs font-semibold">{feat.name}</div>
-                          <div className="text-[10px] text-white/50 line-clamp-1">
+                          <div className="text-xs text-white/50 line-clamp-1">
                             {feat.description}
                           </div>
                         </div>
@@ -593,7 +593,7 @@ export default function Pricing() {
                 <label className="text-xs uppercase font-bold tracking-wider text-white/60">
                   5. Special Requirements &amp; Addons
                 </label>
-                <span className="text-[11px] text-white/40">Optional execution boosters</span>
+                <span className="text-xs text-white/40">Optional execution boosters</span>
               </div>
 
               <div className="space-y-2">
@@ -622,7 +622,7 @@ export default function Pricing() {
                         </div>
                         <div>
                           <span className="text-xs font-semibold">{req.name}</span>
-                          <span className="text-[11px] text-white/50 ml-2 hidden sm:inline">
+                          <span className="text-xs text-white/50 ml-2 hidden sm:inline">
                             — {req.description}
                           </span>
                         </div>
@@ -643,7 +643,7 @@ export default function Pricing() {
               {/* Estimated Price Label */}
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-brand-2 flex items-center gap-1.5">
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-2 flex items-center gap-1.5">
                     <Sliders size={13} />
                     Live Quotation Estimate
                   </span>
@@ -651,7 +651,7 @@ export default function Pricing() {
                     {breakdown.categoryName}
                   </h4>
                 </div>
-                <span className="rounded-full bg-amber-400/10 border border-amber-400/30 px-2.5 py-1 text-[11px] font-semibold text-amber-300">
+                <span className="rounded-full bg-amber-400/10 border border-amber-400/30 px-2.5 py-1 text-xs font-semibold text-amber-300">
                   Estimated Price
                 </span>
               </div>
@@ -660,12 +660,12 @@ export default function Pricing() {
               <div className="py-5 border-b border-white/10">
                 <div className="text-xs text-white/50 mb-1">Estimated Total Investment</div>
                 <div className="flex items-baseline gap-2">
-                  <span className="font-display text-4xl sm:text-5xl font-black text-white tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-brand-2">
+                  <span className="font-display text-4xl sm:text-5xl font-black text-white tracking-tight">
                     {formatINR(breakdown.estimatedTotal)}
                   </span>
                   <span className="text-xs text-white/50">INR</span>
                 </div>
-                <p className="mt-2 text-[11px] text-amber-300/90 flex items-center gap-1.5">
+                <p className="mt-2 text-xs text-amber-300/90 flex items-center gap-1.5">
                   <AlertTriangle size={12} className="shrink-0" />
                   Estimated price based on selected options, not a final binding quotation.
                 </p>
@@ -721,8 +721,8 @@ export default function Pricing() {
               </div>
 
               {/* Domain, Hosting & Third-Party Notice (Mandatory Rule) */}
-              <div className="py-4 space-y-2 text-[11px] text-white/60 border-b border-white/10 bg-white/[0.02] -mx-7 px-7">
-                <div className="font-semibold text-white/80 uppercase tracking-wider text-[10px]">
+              <div className="py-4 space-y-2 text-xs text-white/60 border-b border-white/10 bg-white/[0.02] -mx-7 px-7">
+                <div className="font-semibold text-white/80 uppercase tracking-wider text-xs">
                   Third-Party Services &amp; Taxes Shown Separately:
                 </div>
                 <div className="flex items-start gap-1.5">
@@ -742,7 +742,7 @@ export default function Pricing() {
               </div>
 
               {/* Explicit Payment & Safety Guarantee */}
-              <div className="pt-4 pb-2 text-[11px] text-emerald-400/90 flex items-start gap-2">
+              <div className="pt-4 pb-2 text-xs text-emerald-400/90 flex items-start gap-2">
                 <ShieldCheck size={14} className="shrink-0 mt-0.5" />
                 <span>
                   <strong>Zero Auto-Debits:</strong> You are never charged automatically. No payment
@@ -903,7 +903,7 @@ export default function Pricing() {
                     />
                   </div>
 
-                  <div className="text-[11px] text-white/50 space-y-1">
+                  <div className="text-xs text-white/50 space-y-1">
                     <div>✓ Complete pricing breakdown is automatically attached to this enquiry.</div>
                     <div>✓ No automatic billing. Quotations are strictly estimates until contract signing.</div>
                   </div>

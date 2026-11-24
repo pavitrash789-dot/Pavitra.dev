@@ -31,29 +31,29 @@ const when = (v: string) => new Date(v).toLocaleString(undefined, { day: "numeri
 const ACTIVE = ["Contacted", "Discussion", "Quotation Sent", "In Progress"];
 
 const STATUS_TONE: Record<string, string> = {
-  "New Enquiry": "bg-brand-2/15 text-brand-2 border-brand-2/30",
-  Contacted: "bg-sky-400/10 text-sky-200 border-sky-400/30",
-  Discussion: "bg-indigo-400/10 text-indigo-200 border-indigo-400/30",
-  "Quotation Sent": "bg-amber-400/10 text-amber-200 border-amber-400/30",
-  "In Progress": "bg-brand/20 text-brand border-brand/40",
-  Completed: "bg-emerald-400/10 text-emerald-200 border-emerald-400/30",
-  Cancelled: "bg-red-400/10 text-red-200 border-red-400/30",
+  "New Enquiry": "bg-[#EEF5F1] text-[#1D5E37] border-[#C5DFD0]",
+  Contacted: "bg-sky-50 text-sky-800 border-sky-200",
+  Discussion: "bg-indigo-50 text-indigo-800 border-indigo-200",
+  "Quotation Sent": "bg-amber-50 text-amber-800 border-amber-200",
+  "In Progress": "bg-blue-50 text-blue-800 border-blue-200",
+  Completed: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  Cancelled: "bg-red-50 text-red-800 border-red-200",
 };
 
 function StatusBadge({ status }: { status: string }) {
-  return <span className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${STATUS_TONE[status] ?? "bg-white/5 text-white/70 border-white/15"}`}>{status}</span>;
+  return <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${STATUS_TONE[status] ?? "bg-stone/20 text-slate border-stone"}`}>{status}</span>;
 }
 
 function Stat({ label, value, hint, icon }: { label: string; value: number; hint?: string; icon: React.ReactNode }) {
-  return <div className="card p-5">
-    <div className="flex items-center justify-between text-white/50"><span className="text-xs uppercase tracking-wider">{label}</span>{icon}</div>
-    <p className="mt-3 font-display text-3xl font-bold">{value}</p>
-    {hint && <p className="mt-1 text-xs text-white/40">{hint}</p>}
+  return <div className="panel p-5 bg-white border border-stone">
+    <div className="flex items-center justify-between text-slate"><span className="text-xs uppercase tracking-wider font-semibold">{label}</span>{icon}</div>
+    <p className="mt-3 font-serif-heading text-3xl font-bold text-ink tabular-numbers">{value}</p>
+    {hint && <p className="mt-1 text-xs text-slate">{hint}</p>}
   </div>;
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
-  return <div className="glass grid place-items-center rounded-2xl p-10 text-center text-sm text-white/50">{children}</div>;
+  return <div className="panel grid place-items-center rounded-xl p-10 text-center text-sm text-slate border border-stone bg-white">{children}</div>;
 }
 
 export default function Admin() {
@@ -348,39 +348,39 @@ export default function Admin() {
   }), [reqs, enq, pf]);
 
   if (!isSupabaseConfigured) {
-    return <main className="grid min-h-screen place-items-center px-5">
-      <div className="glass w-full max-w-md space-y-2 rounded-2xl p-8">
-        <h1 className="font-display text-2xl font-bold">Admin unavailable</h1>
-        <p role="alert" className="text-sm text-amber-200">{CONFIG_HINT}</p>
+    return <main className="grid min-h-screen place-items-center px-5 bg-chalk text-ink">
+      <div className="panel w-full max-w-md space-y-2 rounded-2xl p-8 bg-white border border-stone shadow-sm">
+        <h1 className="font-serif-heading text-2xl font-bold text-ink">Admin unavailable</h1>
+        <p role="alert" className="text-sm text-amber-900 bg-amber-50 border border-amber-200 p-3 rounded-lg">{CONFIG_HINT}</p>
       </div>
     </main>;
   }
 
   if (authed === null) {
-    return <main className="grid min-h-screen place-items-center px-5 text-white/60">
+    return <main className="grid min-h-screen place-items-center px-5 text-slate bg-chalk">
       <div className="flex flex-col items-center gap-3">
-        <Loader2 className="animate-spin text-brand-2" size={32} />
-        <span className="text-sm">Connecting to Admin Portal...</span>
+        <Loader2 className="animate-spin text-indigo" size={32} />
+        <span className="text-sm font-medium">Connecting to Admin Portal...</span>
       </div>
     </main>;
   }
 
   if (!authed) {
     return (
-      <main className="grid min-h-screen place-items-center px-5">
-        <div className="glass w-full max-w-md space-y-5 rounded-3xl p-8 border border-white/10 shadow-2xl">
+      <main className="grid min-h-screen place-items-center px-5 bg-chalk text-ink">
+        <div className="panel w-full max-w-md space-y-5 rounded-2xl p-8 border border-stone bg-white shadow-sm">
           <div className="text-center">
-            <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-brand/30 to-brand-2/20 text-brand-2 border border-white/10 shadow-md">
-              <ShieldCheck size={26} />
+            <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-xl bg-chalk text-slate border border-stone">
+              <ShieldCheck size={24} />
             </div>
-            <p className="text-xs uppercase tracking-widest text-white/40">Pavitra<span className="grad">.dev</span></p>
-            <h1 className="font-display text-2xl font-bold text-white mt-1">Admin Dashboard</h1>
-            <p className="text-sm text-white/60 mt-1">Enter your Admin ID and Password to continue.</p>
+            <p className="text-xs uppercase tracking-widest text-slate">Pavitra Sharma</p>
+            <h1 className="font-serif-heading text-2xl font-bold text-ink mt-1">Admin Dashboard</h1>
+            <p className="text-sm text-slate mt-1">Enter your Admin ID and Password to continue.</p>
           </div>
 
           <form onSubmit={login} className="space-y-4">
             <div>
-              <label className="text-xs uppercase font-semibold text-white/50 block mb-1.5">Admin ID / Email</label>
+              <label className="text-xs uppercase font-semibold text-slate block mb-1.5">Admin ID / Email</label>
               <input
                 className="inp"
                 type="email"
@@ -393,7 +393,7 @@ export default function Admin() {
             </div>
 
             <div>
-              <label className="text-xs uppercase font-semibold text-white/50 block mb-1.5">Password</label>
+              <label className="text-xs uppercase font-semibold text-slate block mb-1.5">Password</label>
               <input
                 className="inp"
                 type="password"
@@ -406,13 +406,13 @@ export default function Admin() {
             </div>
 
             {err && (
-              <p role="alert" className="flex items-center gap-2 rounded-xl bg-red-400/10 p-3 text-xs text-red-300 border border-red-400/30">
+              <p role="alert" className="flex items-center gap-2 rounded-xl bg-[#FBF0EE] p-3 text-xs text-[#9A281E] border border-[#F2C4BE]">
                 <AlertCircle size={14} className="shrink-0" />
                 <span>{err}</span>
               </p>
             )}
 
-            <button className="btn btn-p w-full justify-center !py-3 font-semibold shadow-lg" disabled={busy}>
+            <button className="btn btn-p w-full justify-center !py-3 font-semibold" disabled={busy}>
               {busy ? (
                 <>
                   <Loader2 className="animate-spin" size={16} />
@@ -438,13 +438,13 @@ export default function Admin() {
     { id: "pricing", label: "Pricing Manager", count: pricing.categories.length },
   ];
 
-  return <main className="mx-auto max-w-7xl px-4 pb-16 pt-6 md:px-6">
-    <header className="glass sticky top-3 z-30 mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-5 py-3 border border-white/10 shadow-lg">
+  return <main className="mx-auto max-w-7xl px-4 pb-16 pt-6 md:px-6 bg-chalk text-ink min-h-screen">
+    <header className="sticky top-3 z-30 mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-5 py-3 border border-stone bg-white shadow-sm">
       <div className="flex items-center gap-3">
-        <a href="/" className="font-display font-bold hover:text-brand-2 transition-colors">
-          Pavitra<span className="grad">.dev</span>
+        <a href="/" className="font-serif-heading text-lg font-bold text-ink hover:text-slate transition-colors">
+          Pavitra Sharma
         </a>
-        <span className="rounded-full bg-brand/20 border border-brand/40 px-2.5 py-0.5 text-[11px] font-semibold text-brand uppercase tracking-wider">
+        <span className="rounded-full bg-stone/40 border border-stone px-2.5 py-1 text-xs font-semibold text-slate uppercase tracking-wider">
           Admin Portal
         </span>
       </div>
@@ -452,17 +452,17 @@ export default function Admin() {
         <button className="btn btn-g !px-3 !py-2 text-sm" onClick={load} aria-label="Refresh data">
           <RefreshCw size={15} />
         </button>
-        <span className="hidden text-xs text-white/60 md:inline bg-white/5 px-3 py-1 rounded-full border border-white/10">
+        <span className="hidden text-xs text-slate md:inline bg-chalk px-3 py-1 rounded-full border border-stone">
           {email}
         </span>
-        <button className="btn btn-g !px-3 !py-2 text-sm hover:text-red-300" onClick={logout}>
+        <button className="btn btn-g !px-3 !py-2 text-sm hover:text-red-700" onClick={logout}>
           <LogOut size={15} />
           <span>Sign out</span>
         </button>
       </div>
     </header>
 
-    {loadErr && <div role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-red-400/30 bg-red-400/10 p-4 text-sm text-red-200">
+    {loadErr && <div role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-[#F2C4BE] bg-[#FBF0EE] p-4 text-sm text-[#9A281E]">
       <AlertCircle size={16} className="mt-0.5 shrink-0" /><span className="flex-1">{loadErr}</span>
       <button onClick={() => setLoadErr("")} aria-label="Dismiss"><X size={16} /></button></div>}
 
@@ -476,24 +476,24 @@ export default function Admin() {
 
     <div className="mb-5 flex flex-wrap items-center gap-2">
       {tabs.map(t => <button key={t.id} className="chip capitalize" aria-pressed={tab === t.id} onClick={() => { setTab(t.id); setQ(""); }}>
-        {t.label} <span className="ml-1 text-xs text-white/40">{t.count}</span></button>)}
+        {t.label} <span className="ml-1 text-xs text-slate">{t.count}</span></button>)}
     </div>
 
     {tab !== "portfolio" && tab !== "pricing" && <div className="mb-5 flex flex-wrap gap-3">
-      <label className="relative flex-1 min-w-56"><Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+      <label className="relative flex-1 min-w-56"><Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate" />
         <input className="inp !pl-9" placeholder={tab === "requests" ? "Search name, email, category…" : "Search enquiries…"} value={q} onChange={e => setQ(e.target.value)} /></label>
       {tab === "requests" && <select className="inp max-w-52" aria-label="Filter by status" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-        <option value="all" className="text-black">All statuses</option>
-        {statuses.map(s => <option key={s} className="text-black">{s}</option>)}</select>}
+        <option value="all">All statuses</option>
+        {statuses.map(s => <option key={s}>{s}</option>)}</select>}
     </div>}
 
     {tab === "requests" && <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       <div className="space-y-2">
-        {filteredReqs.map(r => <button key={r.id} onClick={() => open(r)} className={`card w-full p-4 text-left ${sel?.id === r.id ? "!border-brand ring-2 ring-brand/30" : ""}`}>
+        {filteredReqs.map(r => <button key={r.id} onClick={() => open(r)} className={`panel w-full p-4 text-left border border-stone bg-white transition-colors hover:border-slate ${sel?.id === r.id ? "!border-indigo ring-2 ring-indigo/20" : ""}`}>
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate font-semibold">{r.name || "Unnamed"}{r.business ? <span className="font-normal text-white/50"> · {r.business}</span> : null}</p>
-              <p className="mt-0.5 truncate text-sm text-white/50">{r.category || "—"} · {r.budget || "No budget"} · {day(r.created_at)}</p>
+              <p className="truncate font-semibold text-ink">{r.name || "Unnamed"}{r.business ? <span className="font-normal text-slate"> · {r.business}</span> : null}</p>
+              <p className="mt-0.5 truncate text-sm text-slate">{r.category || "—"} · {r.budget || "No budget"} · {day(r.created_at)}</p>
             </div>
             <StatusBadge status={r.status} />
           </div>
@@ -501,11 +501,11 @@ export default function Admin() {
         {!filteredReqs.length && <Empty>{reqs.length ? "No requests match your filters." : "No project requests yet."}</Empty>}
       </div>
 
-      {sel ? <div className="glass h-fit space-y-4 rounded-2xl p-6 lg:sticky lg:top-24 border border-white/10 shadow-xl">
+      {sel ? <div className="panel h-fit space-y-4 rounded-xl p-6 lg:sticky lg:top-24 border border-stone bg-white shadow-sm">
         <div className="flex items-start justify-between gap-3">
-          <div><h2 className="font-display text-xl font-bold">{sel.name}{sel.business ? <span className="font-normal text-white/50"> · {sel.business}</span> : null}</h2>
-            <p className="text-xs text-white/40">Submitted {when(sel.created_at)}</p></div>
-          <button onClick={() => setSel(null)} aria-label="Close details" className="text-white/40 hover:text-white"><X size={18} /></button>
+          <div><h2 className="font-serif-heading text-xl font-bold text-ink">{sel.name}{sel.business ? <span className="font-normal text-slate"> · {sel.business}</span> : null}</h2>
+            <p className="text-xs text-slate">Submitted {when(sel.created_at)}</p></div>
+          <button onClick={() => setSel(null)} aria-label="Close details" className="text-slate hover:text-ink"><X size={18} /></button>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -514,80 +514,80 @@ export default function Admin() {
           {sel.reference_url && <a className="btn btn-g !px-3 !py-1.5 text-sm" href={sel.reference_url} target="_blank" rel="noopener noreferrer"><ExternalLink size={14} />Reference</a>}
         </div>
 
-        <div className="space-y-1 text-sm text-white/70">
+        <div className="space-y-1 text-sm text-slate">
           {sel.email && <p>{sel.email}</p>}{sel.whatsapp && <p>{sel.whatsapp}</p>}
         </div>
 
         <div className="flex items-center gap-3">
-          <label className="text-sm text-white/50" htmlFor="status">Status</label>
+          <label className="text-sm text-slate font-medium" htmlFor="status">Status</label>
           <select id="status" className="inp max-w-56" value={sel.status} onChange={e => patchRequest(sel.id, { status: e.target.value })}>
-            {statuses.map(s => <option key={s} className="text-black">{s}</option>)}</select>
+            {statuses.map(s => <option key={s}>{s}</option>)}</select>
         </div>
 
         <dl className="grid gap-3 text-sm sm:grid-cols-2">
           {([["Type", sel.category], ["Design", sel.design], ["Budget", sel.budget], ["Timeline", sel.timeline]] as const).map(([k, v]) =>
-            <div key={k}><dt className="text-xs uppercase tracking-wider text-white/40">{k}</dt><dd>{v || "—"}</dd></div>)}
+            <div key={k}><dt className="text-xs uppercase tracking-wider text-slate font-semibold">{k}</dt><dd className="text-ink font-medium">{v || "—"}</dd></div>)}
         </dl>
 
         {!!sel.pricing_breakdown && (
-          <div className="rounded-xl border border-brand-2/30 bg-brand-2/5 p-4 text-xs space-y-2">
-            <div className="flex items-center justify-between text-brand-2 font-bold uppercase tracking-wider">
+          <div className="rounded-xl border border-stone bg-chalk p-4 text-xs space-y-2">
+            <div className="flex items-center justify-between text-ink font-bold uppercase tracking-wider">
               <span>Saved Pricing Breakdown</span>
-              <span className="text-white text-sm">{formatINR(sel.pricing_breakdown.estimatedTotal)}</span>
+              <span className="text-ink text-sm tabular-numbers">{formatINR(sel.pricing_breakdown.estimatedTotal)}</span>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-white/75 pt-1 border-t border-white/5">
-              <div>Package: <strong className="text-white">{sel.pricing_breakdown.packageName || sel.package}</strong></div>
-              <div>Base Price: <strong className="text-white">{formatINR(sel.pricing_breakdown.selectedPackagePrice)}</strong></div>
-              <div>Pages: <strong className="text-white">{sel.pricing_breakdown.selectedPages} ({sel.pricing_breakdown.extraPagesCost > 0 ? `+${formatINR(sel.pricing_breakdown.extraPagesCost)}` : "Included"})</strong></div>
-              <div>Features Cost: <strong className="text-white">{formatINR(sel.pricing_breakdown.featuresCost || 0)}</strong></div>
+            <div className="grid grid-cols-2 gap-2 text-slate pt-1 border-t border-stone">
+              <div>Package: <strong className="text-ink">{sel.pricing_breakdown.packageName || sel.package}</strong></div>
+              <div>Base Price: <strong className="text-ink tabular-numbers">{formatINR(sel.pricing_breakdown.selectedPackagePrice)}</strong></div>
+              <div>Pages: <strong className="text-ink">{sel.pricing_breakdown.selectedPages} ({sel.pricing_breakdown.extraPagesCost > 0 ? `+${formatINR(sel.pricing_breakdown.extraPagesCost)}` : "Included"})</strong></div>
+              <div>Features Cost: <strong className="text-ink tabular-numbers">{formatINR(sel.pricing_breakdown.featuresCost || 0)}</strong></div>
             </div>
             {sel.pricing_breakdown.selectedFeatures?.length > 0 && (
-              <div className="text-white/60">
-                <span className="text-white/40">Features: </span>
+              <div className="text-slate">
+                <span className="font-semibold text-ink">Features: </span>
                 {sel.pricing_breakdown.selectedFeatures.map((f: any) => `${f.name} (+${formatINR(f.price)})`).join(", ")}
               </div>
             )}
             {sel.pricing_breakdown.selectedSpecialRequirements?.length > 0 && (
-              <div className="text-brand-2/80">
-                <span className="text-white/40">Addons: </span>
+              <div className="text-slate">
+                <span className="font-semibold text-ink">Addons: </span>
                 {sel.pricing_breakdown.selectedSpecialRequirements.map((r: any) => `${r.name} (+${formatINR(r.price)})`).join(", ")}
               </div>
             )}
           </div>
         )}
 
-        {!!sel.purpose && <div><p className="text-xs uppercase tracking-wider text-white/40">Purpose</p><p className="mt-1 text-sm text-white/80">{sel.purpose}</p></div>}
-        {!!sel.description && <div><p className="text-xs uppercase tracking-wider text-white/40">Notes from client</p><p className="mt-1 whitespace-pre-wrap text-sm text-white/80">{sel.description}</p></div>}
-        {!!sel.pages?.length && <div><p className="text-xs uppercase tracking-wider text-white/40">Pages</p><div className="mt-1 flex flex-wrap gap-1.5">{sel.pages.map(p => <span key={p} className="rounded-full bg-white/8 px-2 py-0.5 text-xs">{p}</span>)}</div></div>}
-        {!!sel.features?.length && <div><p className="text-xs uppercase tracking-wider text-white/40">Features</p><div className="mt-1 flex flex-wrap gap-1.5">{sel.features.map(f => <span key={f} className="rounded-full bg-white/8 px-2 py-0.5 text-xs">{f}</span>)}</div></div>}
-        {!!links.length && <div><p className="text-xs uppercase tracking-wider text-white/40">Files</p><ul className="mt-1 space-y-1 text-sm">{links.map(l => <li key={l.url}><a className="text-brand underline" href={l.url} target="_blank" rel="noopener noreferrer">{l.name}</a></li>)}</ul></div>}
+        {!!sel.purpose && <div><p className="text-xs uppercase tracking-wider text-slate font-semibold">Purpose</p><p className="mt-1 text-sm text-ink">{sel.purpose}</p></div>}
+        {!!sel.description && <div><p className="text-xs uppercase tracking-wider text-slate font-semibold">Notes from client</p><p className="mt-1 whitespace-pre-wrap text-sm text-ink">{sel.description}</p></div>}
+        {!!sel.pages?.length && <div><p className="text-xs uppercase tracking-wider text-slate font-semibold">Pages</p><div className="mt-1 flex flex-wrap gap-1.5">{sel.pages.map(p => <span key={p} className="rounded-full bg-stone/40 border border-stone px-2.5 py-1 text-xs text-ink">{p}</span>)}</div></div>}
+        {!!sel.features?.length && <div><p className="text-xs uppercase tracking-wider text-slate font-semibold">Features</p><div className="mt-1 flex flex-wrap gap-1.5">{sel.features.map(f => <span key={f} className="rounded-full bg-stone/40 border border-stone px-2.5 py-1 text-xs text-ink">{f}</span>)}</div></div>}
+        {!!links.length && <div><p className="text-xs uppercase tracking-wider text-slate font-semibold">Files</p><ul className="mt-1 space-y-1 text-sm">{links.map(l => <li key={l.url}><a className="text-indigo underline" href={l.url} target="_blank" rel="noopener noreferrer">{l.name}</a></li>)}</ul></div>}
 
         <div>
-          <label className="text-xs uppercase tracking-wider text-white/40" htmlFor="notes">Internal notes</label>
+          <label className="text-xs uppercase tracking-wider text-slate font-semibold" htmlFor="notes">Internal notes</label>
           <textarea id="notes" className="inp mt-1 min-h-24" placeholder="Call summary, quote sent, next step…" value={notes} onChange={e => { setNotes(e.target.value); setSavedNote(false); }} />
           <div className="mt-2 flex items-center gap-3">
             <button className="btn btn-p !px-4 !py-2 text-sm" onClick={saveNotes}><Save size={15} />Save notes</button>
-            {savedNote && <span role="status" className="flex items-center gap-1 text-sm text-brand-2"><Check size={14} />Saved</span>}
+            {savedNote && <span role="status" className="flex items-center gap-1 text-sm text-emerald-700 font-medium"><Check size={14} />Saved</span>}
           </div>
         </div>
       </div> : <Empty>Select a request to see its details.</Empty>}
     </div>}
 
     {tab === "enquiries" && <div className="space-y-3">
-      {filteredEnq.map(e => <article key={e.id} className="card p-5">
+      {filteredEnq.map(e => <article key={e.id} className="panel p-5 bg-white border border-stone">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div><b>{e.name || "Unknown"}</b>{e.email && <span className="text-white/50"> · {e.email}</span>}</div>
-          <span className="text-xs text-white/40">{when(e.created_at)}</span>
+          <div><b className="text-ink">{e.name || "Unknown"}</b>{e.email && <span className="text-slate"> · {e.email}</span>}</div>
+          <span className="text-xs text-slate">{when(e.created_at)}</span>
         </div>
-        <p className="mt-2 whitespace-pre-wrap text-sm text-white/70">{e.message}</p>
+        <p className="mt-2 whitespace-pre-wrap text-sm text-slate">{e.message}</p>
         {e.email && <a className="btn btn-g mt-3 !px-3 !py-1.5 text-sm" href={`mailto:${e.email}?subject=Re: your enquiry`}><Mail size={14} />Reply</a>}
       </article>)}
       {!filteredEnq.length && <Empty>{enq.length ? "No enquiries match your search." : "No enquiries yet."}</Empty>}
     </div>}
 
     {tab === "portfolio" && <div className="grid gap-6 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]">
-      <form onSubmit={saveProject} className="glass h-fit space-y-3 rounded-2xl p-6 border border-white/10 shadow-xl">
-        <h2 className="font-display text-lg font-bold">{editing ? "Edit project" : "Add project"}</h2>
+      <form onSubmit={saveProject} className="panel h-fit space-y-3 rounded-xl p-6 border border-stone bg-white shadow-sm">
+        <h2 className="font-serif-heading text-lg font-bold text-ink">{editing ? "Edit project" : "Add project"}</h2>
         <input className="inp" placeholder="Title" value={np.title} onChange={e => setNp({ ...np, title: e.target.value })} required />
         <input className="inp" placeholder="Category (e.g. E-commerce)" value={np.category} onChange={e => setNp({ ...np, category: e.target.value })} />
         <input className="inp" placeholder="Tech (comma separated)" value={np.tech} onChange={e => setNp({ ...np, tech: e.target.value })} />
@@ -601,17 +601,17 @@ export default function Admin() {
       </form>
 
       <div className="space-y-3">
-        {pf.map(p => <article key={p.id} className="card flex items-start gap-4 p-4">
+        {pf.map(p => <article key={p.id} className="panel flex items-start gap-4 p-4 bg-white border border-stone">
           {p.image_url ? <img src={p.image_url} alt="" className="h-16 w-24 shrink-0 rounded-lg object-cover" />
-            : <div className="grid h-16 w-24 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-brand/30 to-brand-2/20 text-xs text-white/50">No image</div>}
+            : <div className="grid h-16 w-24 shrink-0 place-items-center rounded-lg bg-chalk text-xs text-slate border border-stone">No image</div>}
           <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold">{p.title}</p>
-            <p className="truncate text-sm text-white/50">{p.category || "—"}{p.tech?.length ? ` · ${p.tech.join(", ")}` : ""}</p>
-            {p.demo_url && <a className="mt-1 inline-flex items-center gap-1 text-xs text-brand underline" href={p.demo_url} target="_blank" rel="noopener noreferrer"><ExternalLink size={12} />Live demo</a>}
+            <p className="truncate font-semibold text-ink">{p.title}</p>
+            <p className="truncate text-sm text-slate">{p.category || "—"}{p.tech?.length ? ` · ${p.tech.join(", ")}` : ""}</p>
+            {p.demo_url && <a className="mt-1 inline-flex items-center gap-1 text-xs text-indigo underline" href={p.demo_url} target="_blank" rel="noopener noreferrer"><ExternalLink size={12} />Live demo</a>}
           </div>
           <div className="flex shrink-0 gap-1">
-            <button className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white" aria-label={`Edit ${p.title}`} onClick={() => editProject(p)}><Pencil size={16} /></button>
-            <button className="rounded-lg p-2 text-red-300/80 hover:bg-red-400/10 hover:text-red-200" aria-label={`Delete ${p.title}`} onClick={() => deleteProject(p.id)}><Trash2 size={16} /></button>
+            <button className="rounded-lg p-2 text-slate hover:bg-stone/30 hover:text-ink" aria-label={`Edit ${p.title}`} onClick={() => editProject(p)}><Pencil size={16} /></button>
+            <button className="rounded-lg p-2 text-red-600 hover:bg-red-50 hover:text-red-700" aria-label={`Delete ${p.title}`} onClick={() => deleteProject(p.id)}><Trash2 size={16} /></button>
           </div>
         </article>)}
         {!pf.length && <Empty>No portfolio projects yet. Add your first one.</Empty>}
@@ -619,10 +619,10 @@ export default function Admin() {
     </div>}
 
     {tab === "pricing" && <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass p-6 rounded-2xl border border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 panel p-6 rounded-xl border border-stone bg-white">
         <div>
-          <h2 className="font-display text-2xl font-bold text-white">Pricing &amp; Quotation Engine</h2>
-          <p className="text-xs text-white/60 mt-1">
+          <h2 className="font-serif-heading text-2xl font-bold text-ink">Pricing &amp; Quotation Engine</h2>
+          <p className="text-xs text-slate mt-1">
             Update category starting prices, tier packaging, extra page rates, and feature addons without editing code. Changes apply immediately to public calculators.
           </p>
         </div>
@@ -631,13 +631,13 @@ export default function Admin() {
             type="button"
             onClick={savePricing}
             disabled={savingPricing}
-            className="btn btn-p !px-5 !py-2.5 text-sm font-semibold shadow-lg shadow-brand/20"
+            className="btn btn-p !px-5 !py-2.5 text-sm font-semibold"
           >
             <Save size={16} />
             <span>{savingPricing ? "Saving Changes..." : "Save Pricing Changes"}</span>
           </button>
           {pricingSavedToast && (
-            <span className="flex items-center gap-1.5 text-xs text-brand-2 font-semibold bg-brand-2/15 border border-brand-2/30 px-3 py-1.5 rounded-full">
+            <span className="flex items-center gap-1.5 text-xs text-emerald-800 font-semibold bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
               <Check size={14} /> Saved &amp; Live!
             </span>
           )}
@@ -645,13 +645,13 @@ export default function Admin() {
       </div>
 
       {/* Global Computation Rates */}
-      <div className="glass p-6 rounded-2xl border border-white/10">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2 mb-4">
+      <div className="panel p-6 rounded-xl border border-stone bg-white">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-ink mb-4">
           Global Computation Rates
         </h3>
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <label className="block text-xs text-white/60 mb-1">Per Extra Page Charge (₹)</label>
+            <label className="block text-xs text-slate font-medium mb-1">Per Extra Page Charge (₹)</label>
             <input
               type="number"
               value={pricing.extraPageRate}
@@ -660,7 +660,7 @@ export default function Admin() {
             />
           </div>
           <div>
-            <label className="block text-xs text-white/60 mb-1">Applicable GST Rate (%)</label>
+            <label className="block text-xs text-slate font-medium mb-1">Applicable GST Rate (%)</label>
             <input
               type="number"
               value={pricing.taxRate}
@@ -669,7 +669,7 @@ export default function Admin() {
             />
           </div>
           <div>
-            <label className="block text-xs text-white/60 mb-1">Currency Code</label>
+            <label className="block text-xs text-slate font-medium mb-1">Currency Code</label>
             <input
               type="text"
               disabled
@@ -681,28 +681,28 @@ export default function Admin() {
       </div>
 
       {/* Categories & Tier Pricing */}
-      <div className="glass p-6 rounded-2xl border border-white/10 space-y-4">
+      <div className="panel p-6 rounded-xl border border-stone bg-white space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-ink">
             Website Categories &amp; Package Tiers ({pricing.categories.length})
           </h3>
-          <span className="text-xs text-white/40">Starter price syncs with Starting From</span>
+          <span className="text-xs text-slate">Starter price syncs with Starting From</span>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {pricing.categories.map((cat, idx) => (
-            <div key={cat.id} className="card p-4 space-y-3 border-white/10">
-              <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                <span className="font-semibold text-sm text-white">{cat.name}</span>
+            <div key={cat.id} className="panel p-4 space-y-3 border border-stone bg-chalk/40">
+              <div className="flex items-center justify-between border-b border-stone pb-2">
+                <span className="font-semibold text-sm text-ink">{cat.name}</span>
                 {cat.isComplex && (
-                  <span className="text-[10px] bg-brand/20 text-brand px-2 py-0.5 rounded-full border border-brand/30">
+                  <span className="text-xs bg-stone/50 text-slate px-2.5 py-1 rounded-full border border-stone font-medium">
                     Complex
                   </span>
                 )}
               </div>
 
               <div>
-                <label className="block text-[11px] text-white/50 mb-0.5">Starting From / Starter Tier (₹)</label>
+                <label className="block text-xs text-slate mb-0.5">Starting From / Starter Tier (₹)</label>
                 <input
                   type="number"
                   value={cat.startingPrice}
@@ -722,7 +722,7 @@ export default function Admin() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[11px] text-white/50 mb-0.5">Professional (₹)</label>
+                  <label className="block text-xs text-slate mb-0.5">Professional (₹)</label>
                   <input
                     type="number"
                     value={cat.packages.professional}
@@ -738,7 +738,7 @@ export default function Admin() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] text-white/50 mb-0.5">Premium (₹)</label>
+                  <label className="block text-xs text-slate mb-0.5">Premium (₹)</label>
                   <input
                     type="number"
                     value={cat.packages.premium}
@@ -760,16 +760,16 @@ export default function Admin() {
       </div>
 
       {/* Feature Addon Pricing */}
-      <div className="glass p-6 rounded-2xl border border-white/10 space-y-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2">
+      <div className="panel p-6 rounded-xl border border-stone bg-white space-y-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-ink">
           Feature Addon Pricing ({pricing.features.length})
         </h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {pricing.features.map((feat, fidx) => (
-            <div key={feat.id} className="card p-3 flex items-center justify-between gap-2">
+            <div key={feat.id} className="panel p-3 flex items-center justify-between gap-2 border border-stone bg-chalk/30">
               <div className="min-w-0">
-                <div className="text-xs font-semibold text-white truncate">{feat.name}</div>
-                <div className="text-[10px] text-white/40 truncate">{feat.description}</div>
+                <div className="text-xs font-semibold text-ink truncate">{feat.name}</div>
+                <div className="text-xs text-slate truncate">{feat.description}</div>
               </div>
               <div className="w-24 shrink-0">
                 <input
@@ -789,16 +789,16 @@ export default function Admin() {
       </div>
 
       {/* Special Requirements */}
-      <div className="glass p-6 rounded-2xl border border-white/10 space-y-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-brand-2">
+      <div className="panel p-6 rounded-xl border border-stone bg-white space-y-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-ink">
           Special Requirements &amp; Boosters ({pricing.specialRequirements.length})
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {pricing.specialRequirements.map((req, ridx) => (
-            <div key={req.id} className="card p-3 flex items-center justify-between gap-3">
+            <div key={req.id} className="panel p-3 flex items-center justify-between gap-3 border border-stone bg-chalk/30">
               <div className="min-w-0">
-                <div className="text-xs font-semibold text-white">{req.name}</div>
-                <div className="text-[10px] text-white/50">{req.description}</div>
+                <div className="text-xs font-semibold text-ink">{req.name}</div>
+                <div className="text-xs text-slate">{req.description}</div>
               </div>
               <div className="w-28 shrink-0">
                 <input
