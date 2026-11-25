@@ -273,6 +273,21 @@ const REAL_PROJECTS: ProjectItem[] = [
     ],
   },
   {
+    id: "kota-carz",
+    title: "Kota Carz",
+    type: "Self-Drive Car Rental Website",
+    year: "2026",
+    stack: "Next.js, Tailwind CSS, WhatsApp Booking",
+    url: "https://www.kotacarz.com/",
+    status: "live",
+    description: "Self-drive and car rental website for Kota, Rajasthan featuring an organized vehicle fleet showcase, transparent rental details, and direct WhatsApp booking.",
+    highlights: [
+      "Self-drive fleet catalog & vehicle showcase",
+      "Direct WhatsApp booking & customer support",
+      "Mobile-first responsive layout",
+    ],
+  },
+  {
     id: "aura-luxe",
     title: "Aura Luxe Storefront",
     type: "Online Store & UPI Checkout",
@@ -302,21 +317,6 @@ const REAL_PROJECTS: ProjectItem[] = [
       "Doctor daily schedule dashboard",
     ],
   },
-  {
-    id: "apex-media",
-    title: "Apex Media Studio",
-    type: "Creative Portfolio & Agency Site",
-    year: "2024",
-    stack: "Next.js, Tailwind CSS",
-    url: null,
-    status: "concept",
-    description: "Content showcase for media studios with high-performance responsive layout, case study archives, and fluid responsive grid typography.",
-    highlights: [
-      "Editorial case study archive layout",
-      "High-performance responsive image galleries",
-      "Accessible left-aligned composition",
-    ],
-  },
 ];
 
 export function Portfolio() {
@@ -339,12 +339,27 @@ export function Portfolio() {
         <div className="divide-y divide-stone border-t border-b border-stone">
           {REAL_PROJECTS.map((project) => {
             const isActive = activeProject.id === project.id;
+            const isLive = project.status === "live" && Boolean(project.url);
+            const handleProjectClick = () => {
+              setActiveProject(project);
+              if (isLive && project.url) {
+                window.open(project.url, "_blank", "noopener,noreferrer");
+              }
+            };
+
             return (
               <div
                 key={project.id}
+                role={isLive ? "link" : undefined}
                 onMouseEnter={() => setActiveProject(project)}
                 onFocus={() => setActiveProject(project)}
-                onClick={() => setActiveProject(project)}
+                onClick={handleProjectClick}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleProjectClick();
+                  }
+                }}
                 tabIndex={0}
                 className={`py-5 px-4 -mx-4 rounded-xl cursor-pointer transition-all duration-150 ${
                   isActive
@@ -362,13 +377,14 @@ export function Portfolio() {
 
                   <div className="flex items-center gap-3 text-xs">
                     <span className="text-slate hidden sm:inline">{project.type}</span>
-                    {project.status === "live" && project.url ? (
+                    {isLive && project.url ? (
                       <a
                         href={project.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-indigo font-medium inline-flex items-center gap-1 hover:underline"
                         onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
                       >
                         <span className="h-1.5 w-1.5 rounded-full bg-[#25D366]" />
                         <span>Live</span>
